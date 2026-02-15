@@ -12,7 +12,7 @@ class PosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Transaction'),
+        title: const Text('Transaksi Penjualan'),
         centerTitle: false,
         elevation: 0,
         actions: [

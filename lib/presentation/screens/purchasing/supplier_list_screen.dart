@@ -33,7 +33,7 @@ class SupplierListScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is SupplierLoaded) {
                   if (state.suppliers.isEmpty) {
-                    return const Center(child: Text('No suppliers found'));
+                    return const Center(child: Text('Tidak ada data Supplier'));
                   }
                   return ListView.separated(
                     padding: const EdgeInsets.all(AppSpacing.md),

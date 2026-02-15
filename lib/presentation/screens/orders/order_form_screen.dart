@@ -32,7 +32,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   final _notesController = TextEditingController();
   final _paymentController = TextEditingController();
 
-  DateTime _dueDate = DateTime.now().add(const Duration(days: 3));
+  DateTime _dueDate = DateTime.now();
   PaymentMethod _paymentMethod = PaymentMethod.cash;
   bool _isLoading = false;
 
@@ -449,7 +449,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Order Baru'),
+          title: const Text('Penjualan Baru'),
         ),
         body: Form(
           key: _formKey,

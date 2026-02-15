@@ -120,7 +120,7 @@ class CartPanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Current Penjualan',
+                    'Daftar Penjualan',
                     style: AppTypography.titleMedium,
                   ),
 
@@ -145,7 +145,7 @@ class CartPanel extends StatelessWidget {
                             ),
                             const SizedBox(height: AppSpacing.md),
                             Text(
-                              'Cart is Empty',
+                              'Keranjang Masih Kosong',
                               style: AppTypography.bodyMedium.copyWith(
                                 color: AppThemeColors.textSecondary,
                               ),
@@ -338,7 +338,7 @@ class _CustomerSelectorState extends State<_CustomerSelector> {
               controller: textEditingController,
               focusNode: focusNode,
               decoration: InputDecoration(
-                hintText: 'Customer Name / Phone',
+                hintText: 'Nama / No HP Pelanggan',
                 prefixIcon: const Icon(Icons.search),
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),

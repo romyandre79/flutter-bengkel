@@ -11,6 +11,7 @@ import 'package:flutter_pos_offline/presentation/screens/dashboard/dashboard_scr
 import 'package:flutter_pos_offline/presentation/screens/reports/report_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/settings/settings_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/pos/pos_screen.dart';
+import 'package:flutter_pos_offline/presentation/screens/orders/order_list_screen.dart';
 import 'package:flutter_pos_offline/logic/cubits/pos/pos_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:flutter_pos_offline/presentation/screens/purchasing/purchase_order_list_screen.dart';
@@ -75,12 +76,14 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ];
 
+        final isLargeScreen = MediaQuery.of(context).size.width > 600;
+
         if (isOwner || user.role == UserRole.kasir) {
           navItems.add(
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.point_of_sale_outlined),
-              activeIcon: Icon(Icons.point_of_sale),
-              label: 'Kasir',
+            BottomNavigationBarItem(
+              icon: Icon(isLargeScreen ? Icons.point_of_sale_outlined : Icons.receipt_long_outlined),
+              activeIcon: Icon(isLargeScreen ? Icons.point_of_sale : Icons.receipt_long),
+              label: isLargeScreen ? 'Kasir' : 'Kasir',
             ),
           );
         }
@@ -124,16 +127,26 @@ class _MainScreenState extends State<MainScreen> {
         ];
 
         if (isOwner || user.role == UserRole.kasir) {
-            // Add POS Screen
+          if (isLargeScreen) {
+            // Add POS Screen for large screens
             // Initialize PosCubit if not already done
             _posCubit ??= PosCubit(context.read<ProductRepository>())..loadProducts();
             
             screens.add(
-            BlocProvider.value(
-              value: _posCubit!,
-              child: PosScreen(),
-            ),
-          );
+              BlocProvider.value(
+                value: _posCubit!,
+                child: const PosScreen(),
+              ),
+            );
+          } else {
+            // Add OrderListScreen for small screens
+            screens.add(
+              BlocProvider.value(
+                value: _orderCubit,
+                child: const OrderListScreen(),
+              ),
+            );
+          }
         }
 
 

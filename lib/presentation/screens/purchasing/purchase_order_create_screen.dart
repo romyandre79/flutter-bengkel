@@ -225,7 +225,7 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Total Amount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      const Text('Total', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       Text(
                         CurrencyFormatter.format(_items.fold(0, (sum, i) => sum + i.subtotal)),
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppThemeColors.primary),

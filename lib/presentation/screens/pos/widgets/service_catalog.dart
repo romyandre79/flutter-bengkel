@@ -21,7 +21,7 @@ class ServiceCatalog extends StatelessWidget {
               // Search Field
               TextField(
                 decoration: const InputDecoration(
-                  hintText: 'Search products...',
+                  hintText: 'Cari Barang/Jasa...',
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -78,7 +78,7 @@ class ServiceCatalog extends StatelessWidget {
 
               if (state is PosLoaded) {
                 if (state.filteredProducts.isEmpty) {
-                   return const Center(child: Text('No products found'));
+                   return const Center(child: Text('Master Item Belum Terisi'));
                 }
 
                 return LayoutBuilder(

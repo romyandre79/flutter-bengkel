@@ -6,6 +6,8 @@ import 'package:flutter_pos_offline/logic/cubits/customer/customer_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/order/order_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/order/order_state.dart';
 import 'package:flutter_pos_offline/logic/cubits/service/service_cubit.dart';
+import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
+import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
 import 'package:flutter_pos_offline/presentation/screens/orders/order_form_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/orders/order_detail_screen.dart';
 import 'package:flutter_pos_offline/presentation/widgets/order_card.dart';
@@ -174,7 +176,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 children: [
                   Expanded(
                     child: Text(
-                      'Orders',
+                      'Penjualan',
                       style: AppTypography.headlineMedium.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -367,7 +369,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Belum ada order',
+              'Belum ada penjualan',
               style: AppTypography.titleMedium.copyWith(
                 color: AppThemeColors.textPrimary,
               ),
@@ -399,7 +401,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
         elevation: 0,
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
-          'Order Baru',
+          'Penjualan Baru',
           style: AppTypography.labelMedium.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w600,
@@ -422,14 +424,21 @@ class _OrderListScreenState extends State<OrderListScreen> {
   }
 
   void _navigateToCreateOrder() {
+    final productRepository = context.read<ProductRepository>();
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => MultiBlocProvider(
           providers: [
+            BlocProvider<ProductCubit>(
+              create: (_) => ProductCubit(productRepository)..loadProducts(),
+            ),
+            BlocProvider<CustomerCubit>(
+              create: (_) => CustomerCubit()..loadCustomers(),
+            ),
             BlocProvider.value(value: context.read<OrderCubit>()),
             BlocProvider(create: (_) => ServiceCubit()..loadServices()),
-            BlocProvider(create: (_) => CustomerCubit()..loadCustomers()),
           ],
           child: const OrderFormScreen(),
         ),

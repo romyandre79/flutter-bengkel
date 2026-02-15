@@ -101,7 +101,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Total Amount Display
+            // Total Display
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
