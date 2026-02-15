@@ -77,6 +77,7 @@ class SupplierListScreen extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: _buildFAB(context, isOwner),
     );
   }
 
@@ -119,36 +120,43 @@ class SupplierListScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              // Add Button
-              if (isOwner)
-                GestureDetector(
-                  onTap: () {
-                    final cubit = context.read<SupplierCubit>();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider.value(
-                          value: cubit,
-                          child: const SupplierFormScreen(),
-                        ),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: AppRadius.smRadius,
-                    ),
-                    child: const Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFAB(BuildContext context, bool isOwner) {
+    if (!isOwner) return const SizedBox.shrink();
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppThemeColors.primaryGradient,
+        borderRadius: AppRadius.fullRadius,
+        boxShadow: AppShadows.purple,
+      ),
+      child: FloatingActionButton.extended(
+        onPressed: () {
+          final cubit = context.read<SupplierCubit>();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: cubit,
+                child: const SupplierFormScreen(),
+              ),
+            ),
+          );
+        },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'Tambah Supplier',
+          style: AppTypography.labelMedium.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

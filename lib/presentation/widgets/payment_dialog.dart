@@ -202,7 +202,7 @@ class _PaymentDialogState extends State<PaymentDialog> {
             DropdownButtonFormField<OrderStatus>(
               initialValue: _orderStatus,
               decoration: const InputDecoration(
-                labelText: 'Status Order',
+                labelText: 'Status Penjualan',
                 border: OutlineInputBorder(),
               ),
               items: OrderStatus.values.map((status) {

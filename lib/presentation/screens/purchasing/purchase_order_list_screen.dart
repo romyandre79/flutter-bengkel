@@ -32,7 +32,7 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text('Pembelians'),
+        title: const Text('Pembelian'),
       ),
       floatingActionButton: Container(
         decoration: BoxDecoration(
@@ -90,7 +90,7 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
 
           if (state is PoLoaded) {
             if (state.purchaseOrders.isEmpty) {
-              return const Center(child: Text('No Pembelians found'));
+              return const Center(child: Text('Tidak ada data Pembelian'));
             }
 
             return ListView.separated(

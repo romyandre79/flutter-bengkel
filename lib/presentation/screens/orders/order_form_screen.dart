@@ -735,7 +735,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                                 ),
                               )
                             : Text(
-                                'Buat Order',
+                                'Buat Penjualan',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

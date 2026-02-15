@@ -7,7 +7,7 @@ class AppConstants {
   static const String appDescription = 'Aplikasi Kasir POS Offline - Full Offline, Jalan Tanpa Internet!';
 
   // Database
-  static const String databaseName = 'pos_offline.db';
+  static const String databaseName = 'kreatif_pos_offline.db';
   static const int databaseVersion = 5;
 
   // Invoice

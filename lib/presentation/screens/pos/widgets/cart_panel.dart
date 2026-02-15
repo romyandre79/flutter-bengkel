@@ -120,7 +120,7 @@ class CartPanel extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Current Order',
+                    'Current Penjualan',
                     style: AppTypography.titleMedium,
                   ),
 
@@ -250,7 +250,7 @@ class CartPanel extends StatelessWidget {
                             ? () => _handleCharge(context, total)
                             : null,
                           child: Text(
-                             total > 0 ? 'Charge ${CurrencyFormatter.format(total)}' : 'Bayar',
+                             total > 0 ? 'Bayar ${CurrencyFormatter.format(total)}' : 'Bayar',
                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),

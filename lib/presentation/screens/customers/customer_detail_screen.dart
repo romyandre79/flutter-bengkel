@@ -177,7 +177,7 @@ class CustomerDetailScreen extends StatelessWidget {
                 Expanded(
                   child: _buildStatItem(
                     icon: Icons.shopping_bag_outlined,
-                    label: 'Total Order',
+                    label: 'Total Penjualan',
                     value: '${customer.totalOrders}',
                     color: AppColors.info,
                   ),

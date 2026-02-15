@@ -33,6 +33,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   late OrderCubit _orderCubit;
+  PosCubit? _posCubit;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     _orderCubit.close();
+    _posCubit?.close();
     super.dispose();
   }
 
@@ -122,12 +124,13 @@ class _MainScreenState extends State<MainScreen> {
         ];
 
         if (isOwner || user.role == UserRole.kasir) {
-           // Add POS Screen
-           screens.add(
-            BlocProvider(
-              create: (context) => PosCubit(
-                context.read<ProductRepository>(),
-              )..loadProducts(),
+            // Add POS Screen
+            // Initialize PosCubit if not already done
+            _posCubit ??= PosCubit(context.read<ProductRepository>())..loadProducts();
+            
+            screens.add(
+            BlocProvider.value(
+              value: _posCubit!,
               child: PosScreen(),
             ),
           );
@@ -212,7 +215,13 @@ class _MainScreenState extends State<MainScreen> {
 
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => setState(() => _currentIndex = index),
+                  onTap: () {
+                    setState(() => _currentIndex = index);
+                    // If switching to POS (Kasir) tab, reload products
+                    if (item.label == 'Kasir') {
+                      _posCubit?.loadProducts();
+                    }
+                  },
                   behavior: HitTestBehavior.opaque,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

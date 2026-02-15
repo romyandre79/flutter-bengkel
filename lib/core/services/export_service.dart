@@ -58,7 +58,7 @@ class ExportService {
     // Summary data
     sheet.cell(CellIndex.indexByString('A4')).value = TextCellValue('Ringkasan');
 
-    sheet.cell(CellIndex.indexByString('A6')).value = TextCellValue('Total Order');
+    sheet.cell(CellIndex.indexByString('A6')).value = TextCellValue('Total Penjualan');
     sheet.cell(CellIndex.indexByString('B6')).value = IntCellValue(reportData.totalOrders);
 
     sheet.cell(CellIndex.indexByString('A7')).value = TextCellValue('Order Selesai');
@@ -91,7 +91,7 @@ class ExportService {
     sheet.cell(CellIndex.indexByString('A16')).value = TextCellValue('Laporan Harian');
 
     sheet.cell(CellIndex.indexByString('A17')).value = TextCellValue('Tanggal');
-    sheet.cell(CellIndex.indexByString('B17')).value = TextCellValue('Jumlah Order');
+    sheet.cell(CellIndex.indexByString('B17')).value = TextCellValue('Jumlah Penjualan');
     sheet.cell(CellIndex.indexByString('C17')).value = TextCellValue('Omzet');
     sheet.cell(CellIndex.indexByString('D17')).value = TextCellValue('Dibayar');
     sheet.cell(CellIndex.indexByString('E17')).value = TextCellValue('Pembelian');
@@ -115,7 +115,7 @@ class ExportService {
   }
 
   void _createOrdersSheet(Excel excel, List<Order> orders) {
-    final sheet = excel['Daftar Order'];
+    final sheet = excel['Daftar Penjualan'];
 
     // Headers
     sheet.cell(CellIndex.indexByString('A1')).value = TextCellValue('No Invoice');
@@ -152,7 +152,7 @@ class ExportService {
 
     // Headers
     sheet.cell(CellIndex.indexByString('A1')).value = TextCellValue('Nama Layanan');
-    sheet.cell(CellIndex.indexByString('B1')).value = TextCellValue('Jumlah Order');
+    sheet.cell(CellIndex.indexByString('B1')).value = TextCellValue('Jumlah Penjualan');
     sheet.cell(CellIndex.indexByString('C1')).value = TextCellValue('Total Qty');
     sheet.cell(CellIndex.indexByString('D1')).value = TextCellValue('Total Pendapatan');
 

@@ -590,7 +590,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Detail Order',
+                      'Detail Penjualan',
                       style: AppTypography.bodySmall.copyWith(
                         color: Colors.white70,
                       ),
@@ -684,7 +684,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Status Order',
+              'Status Penjualan',
               style: AppTypography.labelMedium.copyWith(
                 color: AppThemeColors.textSecondary,
                 fontWeight: FontWeight.w600,
@@ -1024,7 +1024,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             const SizedBox(height: AppSpacing.md),
             _buildInfoRow(
               Icons.calendar_today,
-              'Order',
+              'Penjualan',
               DateFormatter.formatDateTime(order.orderDate),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -1448,7 +1448,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           borderRadius: AppRadius.lgRadius,
         ),
         title: Text(
-          'Hapus Order',
+          'Hapus Penjualan',
           style: AppTypography.titleLarge.copyWith(
             fontWeight: FontWeight.bold,
             color: AppThemeColors.error,

@@ -630,7 +630,7 @@ class _ReportScreenState extends State<ReportScreen> {
             Expanded(
               child: _buildStatCard(
                 icon: Icons.shopping_bag_outlined,
-                label: 'Total Order',
+                label: 'Total Penjualan',
                 value: '${data.totalOrders}',
                 color: AppThemeColors.primary,
               ),

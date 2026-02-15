@@ -25,7 +25,7 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
   Supplier? _selectedSupplier;
   final List<PurchaseOrderItem> _items = [];
   final TextEditingController _notesController = TextEditingController();
-  DateTime _expectedDate = DateTime.now().add(const Duration(days: 7));
+  DateTime _expectedDate = DateTime.now();
 
   @override
   void initState() {
