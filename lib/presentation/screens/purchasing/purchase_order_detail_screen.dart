@@ -4,6 +4,9 @@ import 'package:flutter_pos_offline/core/theme/app_theme.dart';
 import 'package:flutter_pos_offline/core/utils/currency_formatter.dart';
 import 'package:flutter_pos_offline/core/utils/date_formatter.dart';
 import 'package:flutter_pos_offline/data/models/purchase_order.dart';
+import 'package:flutter_pos_offline/data/models/user.dart';
+import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/logic/cubits/purchase_order/purchase_order_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/purchase_order/purchase_order_state.dart';
 
@@ -12,8 +15,15 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
 
   const PurchaseOrderDetailScreen({super.key, required this.order});
 
+  bool _isOwner(BuildContext context) {
+    final authState = context.read<AuthCubit>().state;
+    return authState is AuthAuthenticated && authState.user.role == UserRole.owner;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isOwner = _isOwner(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Pembelian #${order.id}'),
@@ -66,7 +76,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: AppSpacing.lg),
 
                     // Supplier Info
@@ -147,8 +157,8 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
               ),
             ),
 
-            // Action Buttons (only for pending)
-            if (order.status == 'pending')
+            // Action Buttons (only for pending + owner role)
+            if (order.status == 'pending' && isOwner)
               Container(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 decoration: const BoxDecoration(
