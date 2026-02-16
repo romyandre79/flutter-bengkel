@@ -14,6 +14,8 @@ import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/data/models/user.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
 import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:flutter_pos_offline/data/repositories/unit_repository.dart';
 
 class PurchaseOrderListScreen extends StatefulWidget {
   const PurchaseOrderListScreen({super.key});
@@ -43,6 +45,7 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
           boxShadow: AppShadows.purple,
         ),
         child: FloatingActionButton.extended(
+          heroTag: 'fab_purchase_order_list',
           onPressed: () {
             final poCubit = context.read<PurchaseOrderCubit>();
             final supplierCubit = context.read<SupplierCubit>();
@@ -65,6 +68,9 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
                     BlocProvider.value(value: supplierCubit),
                     BlocProvider(
                       create: (_) => ProductCubit(productRepo)..loadProducts(),
+                    ),
+                    BlocProvider(
+                      create: (_) => UnitCubit(UnitRepository())..loadUnits(),
                     ),
                   ],
                   child: const PurchaseOrderCreateScreen(),
@@ -121,7 +127,7 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
                       }
                     },
                     title: Text('${po.supplier?.name ?? "Unknown"}'),
-                    subtitle: Text('${DateFormatter.formatDate(po.orderDate)} - ${po.status.toUpperCase()}'),
+                    subtitle: Text('${DateFormatter.formatDate(po.orderDate)} - ${po.statusDisplay}'),
                     trailing: Text(
                       CurrencyFormatter.format(po.totalAmount),
                       style: const TextStyle(fontWeight: FontWeight.bold),

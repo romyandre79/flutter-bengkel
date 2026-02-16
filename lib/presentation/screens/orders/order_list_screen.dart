@@ -23,6 +23,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   OrderStatus? _selectedStatus;
+  bool _showSearch = false;
 
   @override
   void initState() {
@@ -65,14 +66,74 @@ class _OrderListScreenState extends State<OrderListScreen> {
     }
   }
 
+  void _showSearchBar() {
+    setState(() => _showSearch = !_showSearch);
+    if (!_showSearch) {
+      _searchController.clear();
+      _loadOrders();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppThemeColors.background,
+      appBar: AppBar(
+        title: const Text('Penjualan'),
+        automaticallyImplyLeading: Navigator.canPop(context),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              _showSearchBar();
+            },
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          // Header
-          _buildHeader(),
+          // Search Bar (toggled)
+          if (_showSearch)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
+              child: TextField(
+                controller: _searchController,
+                autofocus: true,
+                style: AppTypography.bodyMedium,
+                decoration: InputDecoration(
+                  hintText: 'Cari nama, HP, atau invoice...',
+                  hintStyle: AppTypography.bodyMedium.copyWith(
+                    color: AppThemeColors.textHint,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppThemeColors.textSecondary,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.close, color: AppThemeColors.textSecondary),
+                    onPressed: () {
+                      _searchController.clear();
+                      _loadOrders();
+                      setState(() => _showSearch = false);
+                    },
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: AppRadius.mdRadius,
+                    borderSide: BorderSide(color: AppThemeColors.border),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.md,
+                  ),
+                ),
+                onChanged: (value) {
+                  _performSearch(value);
+                },
+              ),
+            ),
 
           // Filter Chips
           _buildFilterChips(),
@@ -157,101 +218,6 @@ class _OrderListScreenState extends State<OrderListScreen> {
         ],
       ),
       floatingActionButton: _buildFAB(),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: AppThemeColors.headerGradient,
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            children: [
-              // Title Row
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Penjualan',
-                      style: AppTypography.headlineMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  // Close button - only show when can pop (pushed from another screen)
-                  if (Navigator.canPop(context))
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: AppRadius.smRadius,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-
-              // Search Field (Always visible)
-              const SizedBox(height: AppSpacing.md),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: AppRadius.mdRadius,
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  style: AppTypography.bodyMedium,
-                  decoration: InputDecoration(
-                    hintText: 'Cari nama, HP, atau invoice...',
-                    hintStyle: AppTypography.bodyMedium.copyWith(
-                      color: AppThemeColors.textHint,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: AppThemeColors.textSecondary,
-                    ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: AppThemeColors.textSecondary,
-                            ),
-                            onPressed: () {
-                              _searchController.clear();
-                              _loadOrders();
-                              setState(() {});
-                            },
-                          )
-                        : null,
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg,
-                      vertical: AppSpacing.md,
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {}); // Update UI for clear button
-                    _performSearch(value);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -396,6 +362,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
         boxShadow: AppShadows.purple,
       ),
       child: FloatingActionButton.extended(
+        heroTag: 'fab_order_list',
         onPressed: _navigateToCreateOrder,
         backgroundColor: Colors.transparent,
         elevation: 0,

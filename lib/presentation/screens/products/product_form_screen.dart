@@ -9,7 +9,11 @@ import 'package:flutter_pos_offline/data/models/product.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/data/models/user.dart';
+import 'package:flutter_pos_offline/data/models/unit.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_state.dart';
 
 class ProductFormScreen extends StatefulWidget {
   final Product? product;
@@ -258,26 +262,48 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               const SizedBox(height: AppSpacing.lg),
 
               // Unit
-              TextFormField(
-                initialValue: _selectedUnit,
-                decoration: InputDecoration(
-                  labelText: 'Satuan',
-                  hintText: 'kg, pcs, pack',
-                  prefixIcon: const Icon(Icons.straighten, color: AppThemeColors.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: AppRadius.mdRadius,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: AppRadius.mdRadius,
-                    borderSide: BorderSide(color: AppThemeColors.border),
-                  ),
-                ),
-                onChanged: (val) => _selectedUnit = val,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Satuan tidak boleh kosong';
-                  }
-                  return null;
+              BlocBuilder<UnitCubit, UnitState>(
+                builder: (context, state) {
+                   List<Unit> units = [];
+                   if (state is UnitLoaded) {
+                     units = state.units;
+                   } else if (state is UnitOperationSuccess) {
+                     units = state.units;
+                   }
+                   
+                   // Helper to check if current selected unit is valid
+                   final isValid = units.any((u) => u.name == _selectedUnit);
+                   
+                   return DropdownButtonFormField<String>(
+                    value: isValid ? _selectedUnit : null,
+                    items: units.map((unit) {
+                      return DropdownMenuItem(
+                        value: unit.name,
+                        child: Text(unit.name),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) setState(() => _selectedUnit = val);
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Satuan',
+                      hintText: 'Pilih Satuan',
+                      prefixIcon: const Icon(Icons.straighten, color: AppThemeColors.primary),
+                      border: OutlineInputBorder(
+                        borderRadius: AppRadius.mdRadius,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: AppRadius.mdRadius,
+                        borderSide: BorderSide(color: AppThemeColors.border),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Satuan tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  );
                 },
               ),
               const SizedBox(height: AppSpacing.lg),

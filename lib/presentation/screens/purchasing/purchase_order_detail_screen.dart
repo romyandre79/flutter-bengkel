@@ -61,7 +61,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            order.status.toUpperCase(),
+                            order.statusDisplay,
                             style: TextStyle(
                               color: _getStatusColor(order.status),
                               fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class PurchaseOrderDetailScreen extends StatelessWidget {
                         final item = order.items[index];
                         return ListTile(
                           title: Text(item.itemName),
-                          subtitle: Text('${item.quantity} x ${CurrencyFormatter.format(item.cost)}'),
+                          subtitle: Text('${item.quantity} ${item.unit} x ${CurrencyFormatter.format(item.cost)}'),
                           trailing: Text(
                             CurrencyFormatter.format(item.subtotal),
                             style: const TextStyle(fontWeight: FontWeight.bold),

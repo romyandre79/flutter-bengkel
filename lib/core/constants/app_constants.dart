@@ -8,7 +8,7 @@ class AppConstants {
 
   // Database
   static const String databaseName = 'kreatif_pos_offline.db';
-  static const int databaseVersion = 5;
+  static const int databaseVersion = 7;
 
   // Invoice
   static const String defaultInvoicePrefix = 'POS';

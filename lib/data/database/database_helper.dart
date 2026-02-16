@@ -17,7 +17,7 @@ class DatabaseHelper {
     return _database!;
   }
 
-  Future<Database> _initDB(String filePath) async {
+  Future<String> getDbPath() async {
     final String dbPath;
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       final docsDir = await getApplicationDocumentsDirectory();
@@ -25,10 +25,16 @@ class DatabaseHelper {
     } else {
       dbPath = await getDatabasesPath();
     }
-    final path = join(dbPath, filePath);
+    return join(dbPath, AppConstants.databaseName);
+  }
+
+  Future<Database> _initDB(String filePath) async {
+    final path = await getDbPath();
 
     // Print path for debugging
-    // print('Database path: $path');
+    // print('DEBUG: Database path in _initDB: $path');
+    // final file = File(path);
+    // print('DEBUG: Database file exists: ${await file.exists()}');
 
     return await openDatabase(
       path,
@@ -204,19 +210,30 @@ class DatabaseHelper {
       )
     ''');
 
-    // Simpan Items table
+    // Purchase Order Items table
     await db.execute('''
       CREATE TABLE purchase_order_items (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         purchase_order_id INTEGER NOT NULL,
         item_name TEXT NOT NULL,
         quantity INTEGER NOT NULL,
+        unit TEXT NOT NULL DEFAULT 'pcs',
         cost INTEGER NOT NULL,
         subtotal INTEGER NOT NULL,
         product_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id) ON DELETE CASCADE,
         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+      )
+    ''');
+    
+    // Create Units table
+    await db.execute('''
+      CREATE TABLE units (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     ''');
 
@@ -301,6 +318,24 @@ class DatabaseHelper {
         'key': entry.key,
         'value': entry.value,
       });
+    }
+
+    // Seed units
+    final defaultUnits = [
+      'pcs',
+      'kg',
+      'pack',
+      'box',
+      'liter',
+      'meter',
+      'lusin',
+      'kodi',
+      'unit',
+      'set',
+    ];
+
+    for (final unit in defaultUnits) {
+      await db.insert('units', {'name': unit});
     }
   }
 
@@ -440,6 +475,72 @@ class DatabaseHelper {
         await db.execute('CREATE INDEX idx_po_items_product ON purchase_order_items(product_id)');
       }
     }
+
+    if (oldVersion < 6) {
+      // Create Units table
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS units (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT UNIQUE NOT NULL,
+          created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+      ''');
+
+      // Seed default units
+      final defaultUnits = [
+        'pcs',
+        'kg',
+        'pack',
+        'box',
+        'liter',
+        'meter',
+        'lusin',
+        'kodi',
+        'unit',
+        'set',
+      ];
+
+      for (final unit in defaultUnits) {
+        await db.insert('units', {'name': unit});
+      }
+
+      // Add unit column to purchase_order_items
+      // Check if column exists first to be safe
+      final columns = await db.rawQuery('PRAGMA table_info(purchase_order_items)');
+      final hasUnitColumn = columns.any((col) => col['name'] == 'unit');
+      if (!hasUnitColumn) {
+        await db.execute('ALTER TABLE purchase_order_items ADD COLUMN unit TEXT DEFAULT "pcs"');
+      }
+    }
+
+    if (oldVersion < 7) {
+      // Ensure Units table exists (fix for broken v6)
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS units (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT UNIQUE NOT NULL,
+          created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+      ''');
+
+      // Seed if empty
+      final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM units'));
+      if (count == 0 || count == null) {
+          final defaultUnits = ['pcs', 'kg', 'pack', 'box', 'liter', 'meter', 'lusin', 'kodi', 'unit', 'set'];
+          for (final unit in defaultUnits) {
+            await db.rawInsert('INSERT OR IGNORE INTO units (name) VALUES (?)', [unit]);
+          }
+      }
+
+      // Check column in purchase_order_items
+      final columns = await db.rawQuery('PRAGMA table_info(purchase_order_items)');
+      final hasUnitColumn = columns.any((col) => col['name'] == 'unit');
+      if (!hasUnitColumn) {
+        await db.execute('ALTER TABLE purchase_order_items ADD COLUMN unit TEXT DEFAULT "pcs"');
+      }
+    }
   }
 
   // Utility methods
@@ -450,14 +551,31 @@ class DatabaseHelper {
   }
 
   Future<void> deleteDatabase() async {
-    final dbPath = await getDatabasesPath();
+    final String dbPath;
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      final docsDir = await getApplicationDocumentsDirectory();
+      dbPath = docsDir.path;
+    } else {
+      dbPath = await getDatabasesPath();
+    }
     final path = join(dbPath, AppConstants.databaseName);
-    await databaseFactory.deleteDatabase(path);
-    _database = null;
+    
+    // Close existing connection if any
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+    }
+    
+    // Delete the file
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
+    }
   }
 
   Future<void> resetDatabase() async {
     await deleteDatabase();
-    await database; // This will recreate the database
+    // Force re-initialization
+    _database = await _initDB(AppConstants.databaseName);
   }
 }

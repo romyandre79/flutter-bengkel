@@ -3,6 +3,7 @@ class PurchaseOrderItem {
   final int? purchaseOrderId; // Nullable during creation
   final String itemName;
   final int quantity;
+  final String unit;
   final int cost; // Price per unit
   final int subtotal;
   final int? productId; // Link to master product
@@ -13,6 +14,7 @@ class PurchaseOrderItem {
     this.purchaseOrderId,
     required this.itemName,
     required this.quantity,
+    required this.unit,
     required this.cost,
     required this.subtotal,
     this.productId,
@@ -25,6 +27,7 @@ class PurchaseOrderItem {
       'purchase_order_id': purchaseOrderId,
       'item_name': itemName,
       'quantity': quantity,
+      'unit': unit,
       'cost': cost,
       'subtotal': subtotal,
       'product_id': productId,
@@ -38,6 +41,7 @@ class PurchaseOrderItem {
       purchaseOrderId: map['purchase_order_id'] as int?,
       itemName: map['item_name'] as String,
       quantity: map['quantity'] as int,
+      unit: map['unit'] as String? ?? 'pcs',
       cost: map['cost'] as int,
       subtotal: map['subtotal'] as int,
       productId: map['product_id'] as int?,
@@ -50,6 +54,7 @@ class PurchaseOrderItem {
     int? purchaseOrderId,
     String? itemName,
     int? quantity,
+    String? unit,
     int? cost,
     int? subtotal,
     int? productId,
@@ -60,6 +65,7 @@ class PurchaseOrderItem {
       purchaseOrderId: purchaseOrderId ?? this.purchaseOrderId,
       itemName: itemName ?? this.itemName,
       quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
       cost: cost ?? this.cost,
       subtotal: subtotal ?? this.subtotal,
       productId: productId ?? this.productId,

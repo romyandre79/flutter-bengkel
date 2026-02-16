@@ -20,6 +20,10 @@ import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
 import 'package:flutter_pos_offline/data/repositories/supplier_repository.dart';
 import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:flutter_pos_offline/presentation/screens/purchasing/supplier_list_screen.dart';
+import 'package:flutter_pos_offline/data/repositories/unit_repository.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:flutter_pos_offline/presentation/screens/settings/unit_list_screen.dart';
+import 'package:flutter_pos_offline/data/services/database_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -481,6 +485,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     );
                                   },
                                 ),
+                              if (user != null) _buildDivider(),
+                              _buildSettingTile(
+                                context: context,
+                                icon: Icons.straighten,
+                                title: 'Master Satuan',
+                                subtitle: 'Kelola satuan produk',
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
+                                        create: (context) => UnitCubit(UnitRepository())..loadUnits(),
+                                        child: const UnitListScreen(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ],
                           ),
 
@@ -583,6 +605,164 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             ],
                           ),
+
+                          // Database Management Section
+                          if (user != null && user.role == UserRole.owner)
+                            _buildSection(
+                              title: 'Manajemen Data',
+                              children: [
+                                _buildSettingTile(
+                                  context: context,
+                                  icon: Icons.backup,
+                                  title: 'Backup Database',
+                                  subtitle: 'Simpan salinan database',
+                                  onTap: () async {
+                                    try {
+                                      await DatabaseService().backupDatabase();
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Backup berhasil disimpan'),
+                                            backgroundColor: AppThemeColors.success,
+                                          ),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Gagal backup: $e'),
+                                            backgroundColor: AppThemeColors.error,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                                _buildDivider(),
+                                _buildSettingTile(
+                                  context: context,
+                                  icon: Icons.restore,
+                                  title: 'Restore Database',
+                                  subtitle: 'Kembalikan data dari backup',
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text('Restore Database?'),
+                                        content: const Text(
+                                          'PERINGATAN: Data saat ini akan ditimpa dengan data dari backup. Aplikasi akan direstart.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(ctx),
+                                            child: const Text('Batal'),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.orange,
+                                            ),
+                                            onPressed: () async {
+                                              Navigator.pop(ctx);
+                                              try {
+                                                await DatabaseService().restoreDatabase();
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text('Restore berhasil. Silakan restart aplikasi.'),
+                                                      backgroundColor: AppThemeColors.success,
+                                                    ),
+                                                  );
+                                                }
+                                              } catch (e) {
+                                                if (context.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text('Gagal restore: $e'),
+                                                      backgroundColor: AppThemeColors.error,
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            child: const Text('Restore'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                _buildDivider(),
+                                _buildSettingTile(
+                                  context: context,
+                                  icon: Icons.delete_forever,
+                                  title: 'Reset Database',
+                                  subtitle: 'Hapus semua data',
+                                  onTap: () {
+                                    final confirmController = TextEditingController();
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text('Reset Database?'),
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text(
+                                              'PERINGATAN: Semua data akan dihapus permanen! Tindakan ini tidak dapat dibatalkan.\n\nKetik "RESET" untuk konfirmasi:',
+                                            ),
+                                            const SizedBox(height: 16),
+                                            TextField(
+                                              controller: confirmController,
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                hintText: 'RESET',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(ctx),
+                                            child: const Text('Batal'),
+                                          ),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                            ),
+                                            onPressed: () async {
+                                              if (confirmController.text == 'RESET') {
+                                                Navigator.pop(ctx);
+                                                try {
+                                                  await DatabaseService().resetDatabase();
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text('Database berhasil direset. Silakan restart aplikasi.'),
+                                                        backgroundColor: AppThemeColors.success,
+                                                      ),
+                                                    );
+                                                  }
+                                                } catch (e) {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text('Gagal reset: $e'),
+                                                        backgroundColor: AppThemeColors.error,
+                                                      ),
+                                                    );
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            child: const Text('Hapus Data'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
 
                           // About Section
                           _buildSection(

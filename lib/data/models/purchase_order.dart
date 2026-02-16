@@ -12,6 +12,19 @@ class PurchaseOrder {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   
+  String get statusDisplay {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'Belum Dikirim';
+      case 'received':
+        return 'Sudah Terima';
+      case 'cancelled':
+        return 'Batal';
+      default:
+        return status.toUpperCase();
+    }
+  }
+  
   // Relations
   final Supplier? supplier;
   final List<PurchaseOrderItem> items;

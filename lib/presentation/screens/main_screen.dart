@@ -76,14 +76,14 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ];
 
-        final isLargeScreen = MediaQuery.of(context).size.width > 600;
+        final isLargeScreen = MediaQuery.of(context).size.width > 800;
 
         if (isOwner || user.role == UserRole.kasir) {
           navItems.add(
             BottomNavigationBarItem(
               icon: Icon(isLargeScreen ? Icons.point_of_sale_outlined : Icons.receipt_long_outlined),
               activeIcon: Icon(isLargeScreen ? Icons.point_of_sale : Icons.receipt_long),
-              label: isLargeScreen ? 'Kasir' : 'Kasir',
+              label: isLargeScreen ? 'Kasir' : 'Penjualan',
             ),
           );
         }
@@ -122,7 +122,23 @@ class _MainScreenState extends State<MainScreen> {
         final screens = <Widget>[
           BlocProvider.value(
             value: _orderCubit,
-            child: const DashboardScreen(),
+            child: DashboardScreen(
+              onSwitchTab: (index) {
+                // Determine actual index based on role logic
+                int targetIndex = index;
+                
+                // If user is owner or cashier, index 1 is Sales
+                // If user is owner, index 2 is Purchasing
+                
+                // However, the navItems list is built dynamically. 
+                // We need to ensure the index matches the navItems list.
+                // Standard mapping: 
+                // 1 -> Sales (Kasir)
+                // 2 -> Purchasing (Pembelian)
+                
+                setState(() => _currentIndex = targetIndex);
+              },
+            ),
           ),
         ];
 

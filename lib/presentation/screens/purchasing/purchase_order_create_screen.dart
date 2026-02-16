@@ -14,6 +14,9 @@ import 'package:flutter_pos_offline/data/models/product.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_state.dart';
 import 'package:flutter_pos_offline/presentation/screens/purchasing/purchase_order_detail_screen.dart';
+import 'package:flutter_pos_offline/data/models/unit.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_state.dart';
 
 class PurchaseOrderCreateScreen extends StatefulWidget {
   const PurchaseOrderCreateScreen({super.key});
@@ -42,12 +45,18 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
     if (productState is ProductLoaded) {
       products = productState.products;
     }
+    
+    // Capture UnitCubit from current context to pass to the new route
+    final unitCubit = context.read<UnitCubit>();
 
     final PurchaseOrderItem? newItem = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PurchaseOrderItemEditor(
-          products: products,
+        builder: (context) => BlocProvider.value(
+          value: unitCubit,
+          child: PurchaseOrderItemEditor(
+            products: products,
+          ),
         ),
       ),
     );
@@ -66,12 +75,17 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
       products = productState.products;
     }
 
+    final unitCubit = context.read<UnitCubit>();
+
     final PurchaseOrderItem? updatedItem = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PurchaseOrderItemEditor(
-          products: products,
-          existingItem: _items[index],
+        builder: (context) => BlocProvider.value(
+          value: unitCubit,
+          child: PurchaseOrderItemEditor(
+            products: products,
+            existingItem: _items[index],
+          ),
         ),
       ),
     );
@@ -102,6 +116,7 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
 
     final po = PurchaseOrder(
       supplierId: _selectedSupplier!.id!,
+      supplier: _selectedSupplier, // Populate supplier object here
       orderDate: DateTime.now(),
       expectedDate: _expectedDate,
       status: 'pending',
@@ -211,7 +226,7 @@ class _PurchaseOrderCreateScreenState extends State<PurchaseOrderCreateScreen> {
                         final item = _items[index];
                         return ListTile(
                           title: Text(item.itemName),
-                          subtitle: Text('${item.quantity} x ${CurrencyFormatter.format(item.cost)}'),
+                          subtitle: Text('${item.quantity} ${item.unit} x ${CurrencyFormatter.format(item.cost)}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -290,6 +305,7 @@ class _PurchaseOrderItemEditorState extends State<PurchaseOrderItemEditor> {
   Product? _selectedProduct;
   List<Product> _filteredProducts = [];
   bool _showSearchResults = false;
+  String _selectedUnit = 'pcs';
 
   @override
   void initState() {
@@ -298,6 +314,7 @@ class _PurchaseOrderItemEditorState extends State<PurchaseOrderItemEditor> {
       _nameController.text = widget.existingItem!.itemName;
       _qtyController.text = widget.existingItem!.quantity.toString();
       _costController.text = widget.existingItem!.cost.toString();
+      _selectedUnit = widget.existingItem!.unit;
       
       // Try to find product by ID or Name if available
       if (widget.existingItem!.productId != null) {
@@ -351,6 +368,7 @@ class _PurchaseOrderItemEditorState extends State<PurchaseOrderItemEditor> {
       _searchController.text = product.name;
       _nameController.text = product.name;
       _costController.text = product.cost.toString();
+      _selectedUnit = product.unit;
       _showSearchResults = false; 
     });
   }
@@ -372,6 +390,7 @@ class _PurchaseOrderItemEditorState extends State<PurchaseOrderItemEditor> {
       id: widget.existingItem?.id,
       itemName: _nameController.text,
       quantity: qty,
+      unit: _selectedUnit,
       cost: cost,
       subtotal: qty * cost,
       productId: _selectedProduct?.id ?? widget.existingItem?.productId,
@@ -461,6 +480,37 @@ class _PurchaseOrderItemEditorState extends State<PurchaseOrderItemEditor> {
                 textInputAction: TextInputAction.next,
               ),
               const SizedBox(height: AppSpacing.md),
+              
+              // Unit Dropdown
+              BlocBuilder<UnitCubit, UnitState>(
+                builder: (context, state) {
+                  List<Unit> units = [];
+                  if (state is UnitLoaded) units = state.units;
+                  else if (state is UnitOperationSuccess) units = state.units;
+                  
+                  final isValid = units.any((u) => u.name == _selectedUnit);
+                  
+                  // Use first unit if list not empty and invalid selection? 
+                  // Or use null to force selection.
+                  // If units empty, we have a problem (seed data should exist).
+                  
+                  return DropdownButtonFormField<String>(
+                    value: isValid ? _selectedUnit : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Satuan',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                    ),
+                    items: units.map((u) => DropdownMenuItem(value: u.name, child: Text(u.name))).toList(),
+                    onChanged: (val) {
+                      if (val != null) setState(() => _selectedUnit = val);
+                    },
+                    validator: (val) => val == null || val.isEmpty ? 'Pilih satuan' : null,
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.md),
+
               TextField(
                 controller: _costController,
                 decoration: const InputDecoration(

@@ -10,6 +10,8 @@ import 'package:flutter_pos_offline/presentation/screens/products/product_form_s
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/data/models/user.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:flutter_pos_offline/data/repositories/unit_repository.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -86,8 +88,15 @@ class _ProductListScreenState extends State<ProductListScreen> with SingleTicker
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: context.read<ProductCubit>(),
+        builder: (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider.value(
+              value: context.read<ProductCubit>(),
+            ),
+            BlocProvider(
+              create: (context) => UnitCubit(UnitRepository())..loadUnits(),
+            ),
+          ],
           child: ProductFormScreen(product: product),
         ),
       ),

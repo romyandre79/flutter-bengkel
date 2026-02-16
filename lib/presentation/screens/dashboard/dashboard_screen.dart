@@ -24,7 +24,12 @@ import 'package:flutter_pos_offline/data/repositories/supplier_repository.dart';
 import 'package:flutter_pos_offline/presentation/screens/pos/pos_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final Function(int index)? onSwitchTab;
+
+  const DashboardScreen({
+    super.key,
+    this.onSwitchTab,
+  });
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -363,21 +368,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Expanded(
               child: _buildQuickActionItem(
-                icon: Icons.point_of_sale,
-                label: 'Kasir',
+                icon: MediaQuery.of(context).size.width > 800 ? Icons.point_of_sale : Icons.receipt_long,
+                label: MediaQuery.of(context).size.width > 800 ? 'Kasir' : 'Penjualan',
                 color: AppThemeColors.primary,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BlocProvider(
-                        create: (context) => PosCubit(
-                          context.read<ProductRepository>(),
-                        )..loadProducts(),
-                        child: PosScreen(),
+                  if (widget.onSwitchTab != null) {
+                    widget.onSwitchTab!(1); // Index 1 is usually Sales/Kasir
+                  } else {
+                    // Fallback (keep existing behavior just in case)
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (context) => PosCubit(
+                            context.read<ProductRepository>(),
+                          )..loadProducts(),
+                          child: PosScreen(),
+                        ),
                       ),
-                    ),
-                  ).then((_) => _dashboardCubit.loadDashboard());
+                    ).then((_) => _dashboardCubit.loadDashboard());
+                  }
                 },
               ),
             ),
@@ -388,26 +398,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 label: 'Pembelian',
                 color: AppThemeColors.primary,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MultiBlocProvider(
-                        providers: [
-                          BlocProvider(
-                            create: (context) => PurchaseOrderCubit(
-                              repository: context.read<PurchaseOrderRepository>(),
+                  if (widget.onSwitchTab != null) {
+                    widget.onSwitchTab!(2); // Index 2 is usually Purchasing
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider(
+                              create: (context) => PurchaseOrderCubit(
+                                repository: context.read<PurchaseOrderRepository>(),
+                              ),
                             ),
-                          ),
-                          BlocProvider(
-                            create: (context) => SupplierCubit(
-                              supplierRepository: context.read<SupplierRepository>(),
+                            BlocProvider(
+                              create: (context) => SupplierCubit(
+                                supplierRepository: context.read<SupplierRepository>(),
+                              ),
                             ),
-                          ),
-                        ],
-                        child: const PurchaseOrderListScreen(),
+                          ],
+                          child: const PurchaseOrderListScreen(),
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
             ),
