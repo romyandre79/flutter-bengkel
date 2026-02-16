@@ -107,6 +107,7 @@ class DatabaseHelper {
         type TEXT NOT NULL, -- service, goods
         duration_days INTEGER,
         image_url TEXT,
+        barcode TEXT,
         is_active INTEGER DEFAULT 1,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -540,8 +541,21 @@ class DatabaseHelper {
       if (!hasUnitColumn) {
         await db.execute('ALTER TABLE purchase_order_items ADD COLUMN unit TEXT DEFAULT "pcs"');
       }
+
+    }
+
+    if (oldVersion < 8) {
+      // Add barcode column to products table
+      final columns = await db.rawQuery('PRAGMA table_info(products)');
+      final hasBarcodeColumn = columns.any((col) => col['name'] == 'barcode');
+
+      if (!hasBarcodeColumn) {
+        await db.execute('ALTER TABLE products ADD COLUMN barcode TEXT');
+        await db.execute('CREATE INDEX idx_products_barcode ON products(barcode)');
+      }
     }
   }
+
 
   // Utility methods
   Future<void> close() async {

@@ -148,6 +148,18 @@ class OrderRepository {
         });
       }
 
+      // If status is DONE, deduct stock
+      if (order.status == OrderStatus.done) {
+        for (final item in items) {
+          if (item.productId != null) {
+            await txn.rawUpdate(
+              'UPDATE products SET stock = COALESCE(stock, 0) - ?, updated_at = ? WHERE id = ?',
+              [item.quantity, DateTime.now().toIso8601String(), item.productId],
+            );
+          }
+        }
+      }
+
       return order.copyWith(id: orderId, customerId: customerId);
     });
 
@@ -170,15 +182,57 @@ class OrderRepository {
   Future<void> updateOrderStatus(int id, OrderStatus newStatus) async {
     final db = await _databaseHelper.database;
 
-    await db.update(
-      'orders',
-      {
-        'status': newStatus.value,
-        'updated_at': DateTime.now().toIso8601String(),
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.transaction((txn) async {
+      // Get current status
+      final orderResult = await txn.query(
+        'orders',
+        columns: ['status'],
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      if (orderResult.isEmpty) return;
+
+      final currentStatus = OrderStatusExtension.fromString(
+          orderResult.first['status'] as String);
+
+      // Update status
+      await txn.update(
+        'orders',
+        {
+          'status': newStatus.value,
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      // If moving to DONE, deduct stock
+      if (newStatus == OrderStatus.done && currentStatus != OrderStatus.done) {
+        final itemsResult = await txn.query(
+          'order_items',
+          where: 'order_id = ?',
+          whereArgs: [id],
+        );
+
+        for (final itemMap in itemsResult) {
+          final productId = itemMap['product_id'] as int?;
+          // Default to 0 if null, handle int/double conversion
+          final quantity = (itemMap['quantity'] as num?)?.toDouble() ?? 0.0;
+
+          if (productId != null) {
+            await txn.rawUpdate(
+              'UPDATE products SET stock = COALESCE(stock, 0) - ?, updated_at = ? WHERE id = ?',
+              [quantity, DateTime.now().toIso8601String(), productId],
+            );
+          }
+        }
+      }
+      
+      // Optional: If moving FROM DONE to something else (e.g. Cancelled/Process), return stock?
+      // For now, adhering to "Purchase Order" behavior which only handles "Forward" logic.
+      // If user cancels a DONE order, they might expect stock return, but currently PO doesn't seem to cancel a RECEIVED order easily.
+    });
   }
 
   /// Delete order

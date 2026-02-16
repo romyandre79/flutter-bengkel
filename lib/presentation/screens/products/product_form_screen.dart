@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter_pos_offline/core/theme/app_theme.dart';
@@ -32,9 +34,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   late TextEditingController _stockController;
   late TextEditingController _durationController;
   late TextEditingController _descriptionController;
+  late TextEditingController _barcodeController;
   
   File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+  // final ImagePicker _picker = ImagePicker(); // Removed
 
   ProductType _selectedType = ProductType.service;
   String _selectedUnit = 'pcs';
@@ -49,6 +52,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _stockController = TextEditingController(text: product?.stock?.toString() ?? '0');
     _durationController = TextEditingController(text: product?.durationDays?.toString() ?? '3');
     _descriptionController = TextEditingController(text: product?.description);
+    _barcodeController = TextEditingController(text: product?.barcode);
 
     if (product != null) {
       _selectedType = product.type;
@@ -67,29 +71,91 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     _stockController.dispose();
     _durationController.dispose();
     _descriptionController.dispose();
+    _barcodeController.dispose();
     super.dispose();
   }
 
+
+
+// ...
+
   Future<void> _pickImage() async {
-    final XFile? photo = await _picker.pickImage(source: ImageSource.gallery);
-    if (photo != null) {
-      setState(() {
-        _imageFile = File(photo.path);
-      });
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'heic'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        final processedFile = await _processImage(file);
+        
+        setState(() {
+          _imageFile = processedFile;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+      if (mounted) {
+         ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal memilih gambar: $e'), backgroundColor: AppThemeColors.error),
+        );
+      }
     }
+  }
+
+  Future<File> _processImage(File file) async {
+    final ext = path.extension(file.path).toLowerCase();
+    
+    // Check if HEIC/HEIF
+    if (ext == '.heic' || ext == '.heif') {
+      try {
+        // Prepare target path
+        final tempDir = await getTemporaryDirectory();
+        final targetPath = '${tempDir.path}/${path.basenameWithoutExtension(file.path)}.jpg';
+        
+        // Convert using flutter_image_compress (Mobile/MacOS)
+        // On Windows this might throw or fail if not supported, so we wrap in try-catch
+        if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+            final result = await FlutterImageCompress.compressAndGetFile(
+              file.absolute.path,
+              targetPath,
+              quality: 85,
+              format: CompressFormat.jpeg,
+            );
+            
+            if (result != null) {
+              return File(result.path);
+            }
+        }
+        
+        // Fallback for Windows or if conversion failed (return original and hope OS supports it)
+        // Note: Windows 10/11 with HEIF extension can display HEIC, but Flutter 'Image.file' might still struggle 
+        // without a specific decoder. However, standard 'FileImage' uses the engine's decoder.
+        return file;
+        
+      } catch (e) {
+        debugPrint('Error converting HEIC: $e');
+        return file; // Return original if conversion fails
+      }
+    }
+    
+    return file; // Not HEIC, return as is
   }
 
   Future<String?> _saveImage() async {
     if (_imageFile == null) return null;
     
-    // If it's already an existing saved image (checked by path containing app doc dir), just return path
-    // tailored for simple check: 
-    // real implementation: copy to app directory
-    
     try {
       final appDir = await getApplicationDocumentsDirectory();
+      // Ensure specific images directory exists
+      final imagesDir = Directory('${appDir.path}/product_images');
+      if (!await imagesDir.exists()) {
+        await imagesDir.create(recursive: true);
+      }
+      
       final fileName = path.basename(_imageFile!.path);
-      final savedImage = await _imageFile!.copy('${appDir.path}/$fileName');
+      final savedImage = await _imageFile!.copy('${imagesDir.path}/$fileName');
       return savedImage.path;
     } catch (e) {
       debugPrint('Error saving image: $e');
@@ -113,11 +179,12 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         description: description.isEmpty ? null : description,
         price: price,
         cost: cost,
+        barcode: _barcodeController.text.isEmpty ? null : _barcodeController.text,
         unit: _selectedUnit,
         type: _selectedType,
         // Optional fields based on type
         stock: _selectedType == ProductType.goods 
-            ? int.tryParse(_stockController.text) ?? 0 
+            ? double.tryParse(_stockController.text) ?? 0.0 
             : null,
         durationDays: _selectedType == ProductType.service 
             ? int.tryParse(_durationController.text) ?? 1 
@@ -258,6 +325,24 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: AppSpacing.lg),
+
+              // Barcode
+              TextFormField(
+                controller: _barcodeController,
+                decoration: InputDecoration(
+                  labelText: 'Barcode (Opsional)',
+                  hintText: 'Scan atau ketik barcode',
+                  prefixIcon: const Icon(Icons.qr_code, color: AppThemeColors.textSecondary),
+                  border: OutlineInputBorder(
+                    borderRadius: AppRadius.mdRadius,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: AppRadius.mdRadius,
+                    borderSide: BorderSide(color: AppThemeColors.border),
+                  ),
+                ),
               ),
               const SizedBox(height: AppSpacing.lg),
 

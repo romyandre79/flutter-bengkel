@@ -203,6 +203,66 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.lgRadius),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppThemeColors.primarySurface,
+                borderRadius: AppRadius.smRadius,
+              ),
+              child: const Icon(Icons.info, color: AppThemeColors.primary),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Text('About', style: AppTypography.titleLarge),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAboutRow('Creator', 'Kreatif MajuMU'),
+            const SizedBox(height: AppSpacing.md),
+            _buildAboutRow('PhoneNo', '081932701147'),
+            const SizedBox(height: AppSpacing.md),
+            _buildAboutRow('Address', 'Jl Serut Jaya No 74, Bekasi'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Tutup',
+              style: AppTypography.labelMedium.copyWith(color: AppThemeColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutRow(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: AppTypography.labelSmall.copyWith(color: AppThemeColors.textSecondary),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: AppTypography.bodyLarge.copyWith(fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+
   void _showEditDialog({
     required String title,
     required String currentValue,
@@ -776,15 +836,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 showArrow: false,
                                 onTap: null,
                               ),
-                              // _buildDivider(),
-                              // _buildSettingTile(
-                              //   context: context,
-                              //   icon: Icons.school,
-                              //   title: '.com',
-                              //   subtitle: 'Belajar Flutter dari NOL hingga PRO',
-                              //   showArrow: false,
-                              //   onTap: null,
-                              // ),
+                              _buildDivider(),
+                              _buildSettingTile(
+                                context: context,
+                                icon: Icons.info,
+                                title: 'About',
+                                subtitle: 'Informasi Pembuat',
+                                onTap: () => _showAboutDialog(context),
+                              ),
                             ],
                           ),
 

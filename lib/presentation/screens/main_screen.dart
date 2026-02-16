@@ -7,6 +7,7 @@ import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/logic/cubits/order/order_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/user/user_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/report/report_cubit.dart';
+import 'package:flutter_pos_offline/logic/cubits/dashboard/dashboard_cubit.dart';
 import 'package:flutter_pos_offline/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/reports/report_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/settings/settings_screen.dart';
@@ -34,11 +35,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
   late OrderCubit _orderCubit;
+  late DashboardCubit _dashboardCubit;
   PosCubit? _posCubit;
 
   @override
   void initState() {
     super.initState();
+    _dashboardCubit = DashboardCubit()..loadDashboard();
     _orderCubit = OrderCubit(
       productRepository: context.read<ProductRepository>(),
       orderRepository: context.read<OrderRepository>(),
@@ -50,6 +53,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     _orderCubit.close();
+    _dashboardCubit.close();
     _posCubit?.close();
     super.dispose();
   }
@@ -121,23 +125,26 @@ class _MainScreenState extends State<MainScreen> {
         // Build screens list based on role
         final screens = <Widget>[
           BlocProvider.value(
-            value: _orderCubit,
-            child: DashboardScreen(
-              onSwitchTab: (index) {
-                // Determine actual index based on role logic
-                int targetIndex = index;
-                
-                // If user is owner or cashier, index 1 is Sales
-                // If user is owner, index 2 is Purchasing
-                
-                // However, the navItems list is built dynamically. 
-                // We need to ensure the index matches the navItems list.
-                // Standard mapping: 
-                // 1 -> Sales (Kasir)
-                // 2 -> Purchasing (Pembelian)
-                
-                setState(() => _currentIndex = targetIndex);
-              },
+            value: _dashboardCubit,
+            child: BlocProvider.value(
+              value: _orderCubit,
+              child: DashboardScreen(
+                onSwitchTab: (index) {
+                  // Determine actual index based on role logic
+                  int targetIndex = index;
+                  
+                  // If user is owner or cashier, index 1 is Sales
+                  // If user is owner, index 2 is Purchasing
+                  
+                  // However, the navItems list is built dynamically. 
+                  // We need to ensure the index matches the navItems list.
+                  // Standard mapping: 
+                  // 1 -> Sales (Kasir)
+                  // 2 -> Purchasing (Pembelian)
+                  
+                  setState(() => _currentIndex = targetIndex);
+                },
+              ),
             ),
           ),
         ];
@@ -249,6 +256,8 @@ class _MainScreenState extends State<MainScreen> {
                     // If switching to POS (Kasir) tab, reload products
                     if (item.label == 'Kasir') {
                       _posCubit?.loadProducts();
+                    } else if (item.label == 'Dashboard') {
+                         _dashboardCubit.loadDashboard();
                     }
                   },
                   behavior: HitTestBehavior.opaque,

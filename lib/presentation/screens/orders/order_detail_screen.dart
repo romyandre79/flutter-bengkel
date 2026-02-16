@@ -15,6 +15,8 @@ import 'package:flutter_pos_offline/logic/cubits/order/order_state.dart';
 import 'package:flutter_pos_offline/logic/cubits/printer/printer_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/printer/printer_state.dart';
 import 'package:flutter_pos_offline/core/services/whatsapp_service.dart';
+import 'package:flutter_pos_offline/core/services/pdf_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final int orderId;
@@ -103,17 +105,25 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             _buildWhatsAppOption(
               icon: Icons.receipt_long,
               color: AppThemeColors.primary,
-              title: 'Kirim Struk',
-              subtitle: 'Kirim struk order lengkap',
+              title: 'Kirim Struk (PDF)',
+              subtitle: 'Bagikan struk dalam format PDF',
               onTap: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 Navigator.pop(bottomContext);
                 try {
-                  await WhatsAppService().shareOrderReceipt(order);
+                  // Generate PDF
+                  final pdfFile = await PdfService().generateOrderInvoice(order);
+                  
+                  // Share PDF
+                  await Share.shareXFiles(
+                    [XFile(pdfFile.path)],
+                    text: 'Struk Order ${order.invoiceNumber}',
+                    subject: 'Struk Order ${order.invoiceNumber}',
+                  );
                 } catch (e) {
                   messenger.showSnackBar(
                     SnackBar(
-                      content: Text(e.toString().replaceAll('Exception: ', '')),
+                      content: Text(e.toString()),
                       backgroundColor: AppThemeColors.error,
                     ),
                   );

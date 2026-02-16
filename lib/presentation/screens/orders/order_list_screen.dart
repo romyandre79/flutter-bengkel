@@ -9,7 +9,9 @@ import 'package:flutter_pos_offline/logic/cubits/service/service_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
 import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
 import 'package:flutter_pos_offline/presentation/screens/orders/order_form_screen.dart';
+import 'package:flutter_pos_offline/data/repositories/unit_repository.dart';
 import 'package:flutter_pos_offline/presentation/screens/orders/order_detail_screen.dart';
+import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
 import 'package:flutter_pos_offline/presentation/widgets/order_card.dart';
 
 class OrderListScreen extends StatefulWidget {
@@ -392,6 +394,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
 
   void _navigateToCreateOrder() {
     final productRepository = context.read<ProductRepository>();
+    final orderCubit = context.read<OrderCubit>();
 
     Navigator.push(
       context,
@@ -401,11 +404,12 @@ class _OrderListScreenState extends State<OrderListScreen> {
             BlocProvider<ProductCubit>(
               create: (_) => ProductCubit(productRepository)..loadProducts(),
             ),
-            BlocProvider<CustomerCubit>(
+            BlocProvider(
               create: (_) => CustomerCubit()..loadCustomers(),
             ),
-            BlocProvider.value(value: context.read<OrderCubit>()),
+            BlocProvider.value(value: orderCubit),
             BlocProvider(create: (_) => ServiceCubit()..loadServices()),
+            BlocProvider(create: (_) => UnitCubit(UnitRepository())..loadUnits()), // Added UnitCubit
           ],
           child: const OrderFormScreen(),
         ),

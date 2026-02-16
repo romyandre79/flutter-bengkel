@@ -7,7 +7,7 @@ class ProductRepository {
   ProductRepository({DatabaseHelper? databaseHelper})
       : _databaseHelper = databaseHelper ?? DatabaseHelper.instance;
 
-  Future<List<Product>> getProducts({ProductType? type, bool activeOnly = true}) async {
+  Future<List<Product>> getProducts({ProductType? type, bool activeOnly = true, String? query}) async {
     final db = await _databaseHelper.database;
     String whereClause = '';
     List<dynamic> whereArgs = [];
@@ -23,6 +23,16 @@ class ProductRepository {
         whereClause = 'type = ?';
       }
       whereArgs.add(type.value);
+    }
+
+    if (query != null && query.isNotEmpty) {
+      if (whereClause.isNotEmpty) {
+        whereClause += ' AND (name LIKE ? OR barcode = ?)';
+      } else {
+        whereClause = '(name LIKE ? OR barcode = ?)';
+      }
+      whereArgs.add('%$query%');
+      whereArgs.add(query);
     }
 
     final List<Map<String, dynamic>> maps = await db.query(
@@ -83,7 +93,7 @@ class ProductRepository {
       whereArgs: [id],
     );
   }
-  Future<void> updateStock(int productId, int quantityChange) async {
+  Future<void> updateStock(int productId, double quantityChange) async {
     final db = await _databaseHelper.database;
     await db.rawUpdate(
       'UPDATE products SET stock = stock + ?, updated_at = ? WHERE id = ?',

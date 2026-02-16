@@ -178,12 +178,16 @@ class OrderCubit extends Cubit<OrderState> {
       // Deduct stock for each item
       for (final item in items) {
         if (item.productId != null) {
-          await _productRepository.updateStock(item.productId!, -(item.quantity.toInt()));
+          await _productRepository.updateStock(item.productId!, -(item.quantity));
         }
       }
 
       // Schedule notification
-      await NotificationService().scheduleOrderReminder(createdOrder);
+      try {
+        await NotificationService().scheduleOrderReminder(createdOrder);
+      } catch (_) {
+        // Ignore notification errors
+      }
 
       emit(OrderCreated(createdOrder));
 
@@ -203,7 +207,11 @@ class OrderCubit extends Cubit<OrderState> {
       
       // Cancel reminder if order is done
       if (newStatus == OrderStatus.done) {
-        await NotificationService().cancelOrderReminders(orderId);
+        try {
+          await NotificationService().cancelOrderReminders(orderId);
+        } catch (_) {
+          // Ignore notification errors
+        }
       }
 
       emit(const OrderOperationSuccess('Status berhasil diubah'));

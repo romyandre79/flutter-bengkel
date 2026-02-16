@@ -260,43 +260,7 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                 color: AppThemeColors.textPrimary,
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Tambahkan data pelanggan Anda',
-              style: AppTypography.bodySmall.copyWith(
-                color: AppThemeColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            GestureDetector(
-              onTap: () => _navigateToForm(),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                  vertical: AppSpacing.md,
-                ),
-                decoration: BoxDecoration(
-                  gradient: AppThemeColors.primaryGradient,
-                  borderRadius: AppRadius.mdRadius,
-                  boxShadow: AppShadows.purple,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.add, color: Colors.white, size: 20),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      'Tambah Pelanggan',
-                      style: AppTypography.labelMedium.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+           
           ],
         ),
       ),

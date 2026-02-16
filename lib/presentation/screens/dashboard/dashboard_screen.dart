@@ -35,18 +35,16 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-  late DashboardCubit _dashboardCubit;
 
+class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _dashboardCubit = DashboardCubit()..loadDashboard();
+    // DashboardCubit is now provided by parent
   }
 
   @override
   void dispose() {
-    _dashboardCubit.close();
     super.dispose();
   }
 
@@ -68,11 +66,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Scaffold(
           backgroundColor: AppThemeColors.background,
           body: BlocBuilder<DashboardCubit, DashboardState>(
-            bloc: _dashboardCubit,
             builder: (context, state) {
               return RefreshIndicator(
                 onRefresh: () async {
-                  _dashboardCubit.loadDashboard();
+                  context.read<DashboardCubit>().loadDashboard();
                 },
                 color: AppThemeColors.primary,
                 child: SingleChildScrollView(
@@ -386,7 +383,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: PosScreen(),
                         ),
                       ),
-                    ).then((_) => _dashboardCubit.loadDashboard());
+                    ).then((_) {
+                      if (context.mounted) {
+                        context.read<DashboardCubit>().loadDashboard();
+                      }
+                    });
                   }
                 },
               ),
@@ -618,7 +619,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                 ).then((_) {
-                  _dashboardCubit.loadDashboard();
+                  if (context.mounted) {
+                    context.read<DashboardCubit>().loadDashboard();
+                  }
                 });
               },
               child: Text(
@@ -680,7 +683,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: OrderDetailScreen(orderId: order.id!),
                         ),
                       ),
-                    ).then((_) => _dashboardCubit.loadDashboard());
+                    ).then((_) {
+                      if (context.mounted) {
+                        context.read<DashboardCubit>().loadDashboard();
+                      }
+                    });
                   },
                 ),
               )),
