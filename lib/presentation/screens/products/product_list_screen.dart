@@ -11,6 +11,11 @@ import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/data/models/user.dart';
 import 'package:flutter_pos_offline/logic/cubits/unit/unit_cubit.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_pos_offline/core/services/export_service.dart';
 import 'package:flutter_pos_offline/data/repositories/unit_repository.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -219,7 +224,79 @@ class _ProductListScreenState extends State<ProductListScreen> with SingleTicker
     );
   }
 
+  Future<void> _pickAndImportFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        if (!mounted) return;
+        context.read<ProductCubit>().importProductsFromFile(file);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memilih file: $e'),
+          backgroundColor: AppThemeColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _downloadTemplate() async {
+    // Implement template download logic via ExportService or just create a simple file
+    // For now, we can create a simple Excel file with headers
+    final excel = Excel.createExcel();
+    final sheet = excel['Template Produk'];
+    
+    // Headers
+    // Name, Description, Price, Cost, Stock, Unit, Type (Barang/Jasa), Barcode
+    List<String> headers = ['Nama Produk', 'Deskripsi', 'Harga Jual', 'Harga Beli', 'Stok', 'Satuan', 'Tipe (Barang/Jasa)', 'Barcode'];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0)).value = TextCellValue(headers[i]);
+    }
+    
+    // Example Row
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1)).value = TextCellValue('Contoh Produk');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 1)).value = TextCellValue('Deskripsi produk');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1)).value = IntCellValue(10000);
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 1)).value = IntCellValue(5000);
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 1)).value = IntCellValue(100);
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 1)).value = TextCellValue('pcs');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 1)).value = TextCellValue('Barang');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 1)).value = TextCellValue('123456789');
+
+    excel.delete('Sheet1');
+
+    final fileName = 'Template_Import_Produk.xlsx';
+    final filePath = await ExportService().saveExcelFile(excel, fileName);
+
+    if (filePath != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Template disimpan di: $fileName'),
+          backgroundColor: AppThemeColors.success,
+          action: SnackBarAction(
+            label: 'Buka',
+            textColor: Colors.white,
+            onPressed: () {
+               SharePlus.instance.share(ShareParams(files: [XFile(filePath)], text: 'Template Import Produk'));
+            },
+          ),
+        ),
+      );
+    }
+  }
+
   Widget _buildHeader() {
+    final authState = context.read<AuthCubit>().state;
+    final isOwner = authState is AuthAuthenticated && authState.user.role == UserRole.owner;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: AppThemeColors.headerGradient,
@@ -258,6 +335,39 @@ class _ProductListScreenState extends State<ProductListScreen> with SingleTicker
                   ),
                 ),
               ),
+              if (isOwner)
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                  onSelected: (value) {
+                    if (value == 'import') {
+                      _pickAndImportFile();
+                    } else if (value == 'template') {
+                      _downloadTemplate();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'import',
+                      child: Row(
+                        children: [
+                          Icon(Icons.upload_file, color: AppThemeColors.primary),
+                          SizedBox(width: 8),
+                          Text('Import Excel'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'template',
+                      child: Row(
+                        children: [
+                          Icon(Icons.download, color: AppThemeColors.primary),
+                          SizedBox(width: 8),
+                          Text('Download Template'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pos_offline/core/services/import_service.dart';
 import 'package:flutter_pos_offline/data/models/supplier.dart';
 import 'package:flutter_pos_offline/data/repositories/supplier_repository.dart';
 import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_state.dart';
@@ -50,6 +52,24 @@ class SupplierCubit extends Cubit<SupplierState> {
       loadSuppliers(); // Reload list
     } catch (e) {
       emit(SupplierError('Failed to delete supplier: ${e.toString()}'));
+    }
+  }
+
+  Future<void> importSuppliers(File file) async {
+    try {
+      emit(SupplierLoading());
+      final suppliers = await ImportService().parseSuppliersFromExcel(file);
+      if (suppliers.isEmpty) {
+        emit(SupplierError('No supplier data found'));
+        await loadSuppliers();
+        return;
+      }
+      await _supplierRepository.addSuppliers(suppliers);
+      emit(const SupplierOperationSuccess('Suppliers imported successfully'));
+      await loadSuppliers();
+    } catch (e) {
+      emit(SupplierError('Failed to import suppliers: ${e.toString()}'));
+       await loadSuppliers();
     }
   }
 }

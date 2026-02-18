@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pos_offline/core/theme/app_theme.dart';
@@ -7,6 +8,11 @@ import 'package:flutter_pos_offline/logic/cubits/customer/customer_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/customer/customer_state.dart';
 import 'package:flutter_pos_offline/presentation/screens/customers/customer_form_screen.dart';
 import 'package:flutter_pos_offline/presentation/screens/customers/customer_detail_screen.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter_pos_offline/core/services/export_service.dart';
 
 class CustomerListScreen extends StatefulWidget {
   const CustomerListScreen({super.key});
@@ -134,6 +140,68 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
     );
   }
 
+  Future<void> _pickAndImportFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        if (!mounted) return;
+        context.read<CustomerCubit>().importCustomers(file);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memilih file: $e'),
+          backgroundColor: AppThemeColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _downloadTemplate() async {
+    final excel = Excel.createExcel();
+    final sheet = excel['Template Pelanggan'];
+    
+    // Headers: Name, Phone, Address, Notes
+    List<String> headers = ['Nama Pelanggan', 'Nomor HP', 'Alamat', 'Catatan'];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0)).value = TextCellValue(headers[i]);
+    }
+    
+    // Example Row
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1)).value = TextCellValue('Budi Santoso');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 1)).value = TextCellValue('081234567890');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1)).value = TextCellValue('Jl. Merdeka No. 45, Jakarta');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 1)).value = TextCellValue('Pelanggan VIP');
+
+    excel.delete('Sheet1');
+
+    final fileName = 'Template_Import_Pelanggan.xlsx';
+    final filePath = await ExportService().saveExcelFile(excel, fileName);
+
+    if (filePath != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Template disimpan di: $fileName'),
+          backgroundColor: AppThemeColors.success,
+          action: SnackBarAction(
+            label: 'Buka',
+            textColor: Colors.white,
+            onPressed: () {
+               SharePlus.instance.share(ShareParams(files: [XFile(filePath)], text: 'Template Import Pelanggan'));
+            },
+          ),
+        ),
+      );
+    }
+  }
+
   Widget _buildHeader() {
     return Container(
       decoration: const BoxDecoration(
@@ -191,6 +259,38 @@ class _CustomerListScreenState extends State<CustomerListScreen> {
                         size: 20,
                       ),
                     ),
+                  ),
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    onSelected: (value) {
+                      if (value == 'import') {
+                        _pickAndImportFile();
+                      } else if (value == 'template') {
+                        _downloadTemplate();
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'import',
+                        child: Row(
+                          children: [
+                            Icon(Icons.upload_file, color: AppThemeColors.primary),
+                            SizedBox(width: 8),
+                            Text('Import Excel'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem(
+                        value: 'template',
+                        child: Row(
+                          children: [
+                            Icon(Icons.download, color: AppThemeColors.primary),
+                            SizedBox(width: 8),
+                            Text('Download Template'),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

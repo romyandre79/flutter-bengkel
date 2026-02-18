@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pos_offline/core/services/import_service.dart';
 import 'package:flutter_pos_offline/data/models/customer.dart';
 import 'package:flutter_pos_offline/data/repositories/customer_repository.dart';
 import 'package:flutter_pos_offline/logic/cubits/customer/customer_state.dart';
@@ -77,6 +79,24 @@ class CustomerCubit extends Cubit<CustomerState> {
     try {
       await _customerRepository.deleteCustomer(id);
       emit(const CustomerOperationSuccess('Customer berhasil dihapus'));
+      await loadCustomers();
+    } catch (e) {
+      emit(CustomerError(e.toString().replaceAll('Exception: ', '')));
+      emit(CustomerLoaded(_customers));
+    }
+  }
+
+  Future<void> importCustomers(File file) async {
+    emit(const CustomerLoading());
+    try {
+      final customers = await ImportService().parseCustomersFromExcel(file);
+      if (customers.isEmpty) {
+        emit(const CustomerError('Tidak ada data customer yang ditemukan'));
+        emit(CustomerLoaded(_customers));
+        return;
+      }
+      await _customerRepository.addCustomers(customers);
+      emit(const CustomerOperationSuccess('Berhasil mengimpor customer'));
       await loadCustomers();
     } catch (e) {
       emit(CustomerError(e.toString().replaceAll('Exception: ', '')));

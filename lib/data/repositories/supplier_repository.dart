@@ -45,4 +45,24 @@ class SupplierRepository {
       whereArgs: [id],
     );
   }
+
+  Future<void> addSuppliers(List<Supplier> suppliers) async {
+    final db = await _databaseHelper.database;
+    final batch = db.batch();
+    final now = DateTime.now().toIso8601String();
+
+    for (var supplier in suppliers) {
+      batch.insert('suppliers', {
+        'name': supplier.name,
+        'contact_person': supplier.contactPerson,
+        'address': supplier.address,
+        'phone': supplier.phone,
+        'email': supplier.email,
+        'created_at': now,
+        'updated_at': now,
+      });
+    }
+
+    await batch.commit(noResult: true);
+  }
 }

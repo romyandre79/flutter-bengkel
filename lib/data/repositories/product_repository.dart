@@ -100,4 +100,15 @@ class ProductRepository {
       [quantityChange, DateTime.now().toIso8601String(), productId],
     );
   }
+
+  Future<void> addProducts(List<Product> products) async {
+    final db = await _databaseHelper.database;
+    final batch = db.batch();
+
+    for (var product in products) {
+      batch.insert('products', product.toMap());
+    }
+
+    await batch.commit(noResult: true);
+  }
 }

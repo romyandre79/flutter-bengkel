@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pos_offline/core/services/import_service.dart';
 import 'package:flutter_pos_offline/data/models/product.dart';
 import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
 import 'package:flutter_pos_offline/logic/cubits/product/product_state.dart';
@@ -59,6 +61,43 @@ class ProductCubit extends Cubit<ProductState> {
       emit(ProductLoaded(_products));
     } catch (e) {
       emit(ProductError('Gagal menghapus item: ${e.toString()}'));
+      emit(ProductLoaded(_products));
+    }
+  }
+
+  Future<void> importProducts() async {
+    // 1. Pick file
+    // Note: We need to handle file picking here or in UI. 
+    // Usually Cubit should receive the file or file path, but for simplicity we can use FilePicker here 
+    // or better, let UI pick and pass the file.
+    // However, to keep logic in Cubit, we can do it here if we impart 'UI-free' logic or inject a service.
+    // But since FilePicker is a plugin, it's fine to use it here or in UI.
+    // Let's assume UI handles picking to keep Cubit clean from UI plugins if possible, 
+    // but often it's convenient to put it here.
+    // Let's modify this to receive a File object to be more testable and clean.
+  }
+  
+  Future<void> importProductsFromFile(File file) async {
+    emit(ProductLoading());
+    try {
+      // 2. Parse
+      final products = await ImportService().parseProductsFromExcel(file);
+      
+      if (products.isEmpty) {
+        emit(const ProductError('Tidak ada data produk yang ditemukan dalam file'));
+        emit(ProductLoaded(_products));
+        return;
+      }
+
+      // 3. Save
+      await _productRepository.addProducts(products);
+      
+      // 4. Reload
+      await loadProducts();
+      emit(const ProductOperationSuccess('Berhasil mengimpor produk'));
+      emit(ProductLoaded(_products));
+    } catch (e) {
+      emit(ProductError('Gagal mengimpor produk: ${e.toString()}'));
       emit(ProductLoaded(_products));
     }
   }

@@ -278,4 +278,60 @@ class CustomerRepository {
     );
     return result.first['count'] as int;
   }
+
+  Future<void> addCustomers(List<Customer> customers) async {
+    final db = await _databaseHelper.database;
+    final batch = db.batch();
+
+    // Get existing phones/names to avoid duplicates is expensive for large datasets
+    // But for offline POS, dataset is likely small (< 10k).
+    // Let's just do a simple check or rely on batch.
+    
+    // For now, allow potential duplicates via import or assume user cleaned data.
+    // Or better: use conflictAlgorithm if defined in schema. 
+    // Since schema is unknown (likely no unique constraint on phone), 
+    // we will just insert. Detailed de-duplication can be a separate feature or 
+    // we can assume 'Name' unique?
+    
+    // Let's implement a 'smart' insert that checks for existing name/phone 
+    // for each item in the list - might be slow but safer.
+    // OPTIMIZATION: Get all customers first (ID, Name, Phone).
+    
+    final existingResult = await db.query('customers', columns: ['id', 'name', 'phone']);
+    final existingPhones = <String>{};
+    final existingNames = <String>{}; // Case insensitive check?
+
+    for (var row in existingResult) {
+      if (row['phone'] != null) existingPhones.add(row['phone'] as String);
+      existingNames.add((row['name'] as String).toLowerCase());
+    }
+
+    final now = DateTime.now().toIso8601String();
+
+    for (var customer in customers) {
+      if (customer.name.isEmpty) continue;
+      
+      // Check Name
+      if (existingNames.contains(customer.name.toLowerCase())) continue;
+      
+      // Check Phone
+      if (customer.phone != null && existingPhones.contains(customer.phone)) continue;
+
+      batch.insert('customers', {
+        'name': customer.name.trim(),
+        'phone': customer.phone?.trim(),
+        'address': customer.address?.trim(),
+        'notes': customer.notes?.trim(),
+        'total_orders': 0,
+        'total_spent': 0,
+        'created_at': now,
+        'updated_at': now,
+      });
+      
+      existingNames.add(customer.name.toLowerCase());
+      if (customer.phone != null) existingPhones.add(customer.phone!);
+    }
+
+    await batch.commit(noResult: true);
+  }
 }

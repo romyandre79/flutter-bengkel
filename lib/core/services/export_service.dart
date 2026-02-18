@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:share_plus/share_plus.dart' show SharePlus, ShareParams, XFile;
 import 'package:flutter_pos_offline/data/models/order.dart';
 import 'package:flutter_pos_offline/data/models/purchase_order.dart';
@@ -410,5 +411,40 @@ class ExportService {
     }
 
     throw Exception('Gagal membuat file Excel Laporan Stok');
+  }
+
+  /// Save Excel file (Handles both Mobile and Desktop)
+  Future<String?> saveExcelFile(Excel excel, String fileName) async {
+    final fileBytes = excel.save();
+    if (fileBytes == null) return null;
+
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      final outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Simpan File Excel',
+        fileName: fileName,
+        allowedExtensions: ['xlsx'],
+        type: FileType.custom,
+      );
+
+      if (outputFile != null) {
+        // Ensure extension
+        String path = outputFile;
+        if (!path.endsWith('.xlsx')) {
+          path = '$path.xlsx';
+        }
+
+        final file = File(path);
+        await file.writeAsBytes(fileBytes);
+        return path;
+      }
+      return null; // User canceled
+    } else {
+      // Mobile
+      final directory = await getApplicationDocumentsDirectory();
+      final filePath = '${directory.path}/$fileName';
+      final file = File(filePath);
+      await file.writeAsBytes(fileBytes);
+      return filePath;
+    }
   }
 }

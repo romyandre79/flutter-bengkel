@@ -1,20 +1,99 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pos_offline/core/theme/app_theme.dart';
 import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_state.dart';
 import 'package:flutter_pos_offline/presentation/screens/purchasing/supplier_form_screen.dart';
+import 'package:flutter_pos_offline/core/services/export_service.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
 import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
 import 'package:flutter_pos_offline/data/models/user.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:excel/excel.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
-class SupplierListScreen extends StatelessWidget {
+class SupplierListScreen extends StatefulWidget {
   const SupplierListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Trigger load on build if not loaded
+  State<SupplierListScreen> createState() => _SupplierListScreenState();
+}
+
+class _SupplierListScreenState extends State<SupplierListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger load on init
     context.read<SupplierCubit>().loadSuppliers();
+  }
+
+  Future<void> _pickAndImportFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        if (!mounted) return;
+        context.read<SupplierCubit>().importSuppliers(file);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memilih file: $e'),
+          backgroundColor: AppThemeColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _downloadTemplate() async {
+    final excel = Excel.createExcel();
+    final sheet = excel['Template Supplier'];
+    
+    // Headers: Name, Contact Person, Phone, Email, Address
+    List<String> headers = ['Nama Supplier', 'Contact Person', 'Nomor HP', 'Email', 'Alamat'];
+    for (int i = 0; i < headers.length; i++) {
+      sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0)).value = TextCellValue(headers[i]);
+    }
+    
+    // Example Row
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 1)).value = TextCellValue('PT. Supplier Maju');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: 1)).value = TextCellValue('Bapak Andi');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: 1)).value = TextCellValue('081298765432');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: 1)).value = TextCellValue('info@suppliermaju.com');
+    sheet.cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 1)).value = TextCellValue('Jl. Industri No. 99, Surabaya');
+
+    excel.delete('Sheet1');
+
+    final fileName = 'Template_Import_Supplier.xlsx';
+    final filePath = await ExportService().saveExcelFile(excel, fileName);
+
+    if (filePath != null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Template disimpan di: $fileName'),
+          backgroundColor: AppThemeColors.success,
+          action: SnackBarAction(
+            label: 'Buka',
+            textColor: Colors.white,
+            onPressed: () {
+               SharePlus.instance.share(ShareParams(files: [XFile(filePath)], text: 'Template Import Supplier'));
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authState = context.read<AuthCubit>().state;
     final isOwner = authState is AuthAuthenticated && authState.user.role == UserRole.owner;
 
@@ -27,7 +106,18 @@ class SupplierListScreen extends StatelessWidget {
 
           // Content
           Expanded(
-            child: BlocBuilder<SupplierCubit, SupplierState>(
+            child: BlocConsumer<SupplierCubit, SupplierState>(
+              listener: (context, state) {
+                if (state is SupplierOperationSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message), backgroundColor: AppThemeColors.success),
+                  );
+                } else if (state is SupplierError) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message), backgroundColor: AppThemeColors.error),
+                  );
+                }
+              },
               builder: (context, state) {
                 if (state is SupplierLoading) {
                   return const Center(child: CircularProgressIndicator());
@@ -120,6 +210,39 @@ class SupplierListScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              if (isOwner)
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                  onSelected: (value) {
+                    if (value == 'import') {
+                      _pickAndImportFile();
+                    } else if (value == 'template') {
+                      _downloadTemplate();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'import',
+                      child: Row(
+                        children: [
+                          Icon(Icons.upload_file, color: AppThemeColors.primary),
+                          SizedBox(width: 8),
+                          Text('Import Excel'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'template',
+                      child: Row(
+                        children: [
+                          Icon(Icons.download, color: AppThemeColors.primary),
+                          SizedBox(width: 8),
+                          Text('Download Template'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
         ),
