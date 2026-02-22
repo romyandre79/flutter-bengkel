@@ -82,7 +82,7 @@ class _PurchaseOrderListScreenState extends State<PurchaseOrderListScreen> {
           elevation: 0,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
-            'Pesan Baru',
+            'Pembelian Baru',
             style: AppTypography.labelMedium.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,
