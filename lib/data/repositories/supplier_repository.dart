@@ -1,5 +1,5 @@
-import 'package:flutter_pos_offline/data/database/database_helper.dart';
-import 'package:flutter_pos_offline/data/models/supplier.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/data/models/supplier.dart';
 
 class SupplierRepository {
   final DatabaseHelper _databaseHelper;

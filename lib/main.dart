@@ -4,24 +4,24 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:flutter_pos_offline/core/theme/app_theme.dart';
-import 'package:flutter_pos_offline/core/utils/date_formatter.dart';
-import 'package:flutter_pos_offline/data/database/database_helper.dart';
-import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
-import 'package:flutter_pos_offline/presentation/screens/auth/login_screen.dart';
-import 'package:flutter_pos_offline/presentation/screens/main_screen.dart';
-import 'package:flutter_pos_offline/presentation/screens/onboarding/onboarding_screen.dart';
-import 'package:flutter_pos_offline/data/repositories/auth_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/customer_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/order_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/report_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/service_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/user_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/supplier_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/purchase_order_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
-import 'package:flutter_pos_offline/logic/cubits/order/order_cubit.dart';
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/presentation/screens/auth/login_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/main_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/onboarding/onboarding_screen.dart';
+import 'package:flutter_otopart_offline/data/repositories/auth_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/report_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/service_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/user_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/supplier_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/purchase_order_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
           ),
         ],
         child: MaterialApp(
-          title: 'POS Offline',
+          title: 'Otopart Offline',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           home: AuthWrapper(showOnboarding: showOnboarding),
@@ -149,7 +149,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
                       boxShadow: AppShadows.medium,
                     ),
                     child: Image.asset(
-                      'assets/icons/logopos.png',
+                      'assets/icons/logobengkel.png',
                       fit: BoxFit.contain,
                     ),
                   ),

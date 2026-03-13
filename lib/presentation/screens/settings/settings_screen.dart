@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:flutter_pos_offline/core/constants/app_constants.dart';
-import 'package:flutter_pos_offline/core/theme/app_theme.dart';
-import 'package:flutter_pos_offline/data/models/user.dart';
-import 'package:flutter_pos_offline/logic/cubits/auth/auth_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/auth/auth_state.dart';
-import 'package:flutter_pos_offline/logic/cubits/settings/settings_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/settings/settings_state.dart';
-import 'package:flutter_pos_offline/logic/cubits/user/user_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/customer/customer_cubit.dart';
-import 'package:flutter_pos_offline/presentation/screens/settings/user_management_screen.dart';
-import 'package:flutter_pos_offline/presentation/screens/settings/printer_settings_screen.dart';
-import 'package:flutter_pos_offline/logic/cubits/product/product_cubit.dart';
-import 'package:flutter_pos_offline/presentation/screens/products/product_list_screen.dart';
-import 'package:flutter_pos_offline/presentation/screens/customers/customer_list_screen.dart';
-import 'package:flutter_pos_offline/data/repositories/product_repository.dart';
+import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/data/models/user.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/settings/settings_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/settings/settings_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/user/user_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/user_management_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/printer_settings_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/product/product_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/products/product_list_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/customers/customer_list_screen.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

@@ -1,5 +1,5 @@
-import 'package:flutter_pos_offline/data/models/purchase_order_item.dart';
-import 'package:flutter_pos_offline/data/models/supplier.dart';
+import 'package:flutter_otopart_offline/data/models/purchase_order_item.dart';
+import 'package:flutter_otopart_offline/data/models/supplier.dart';
 
 class PurchaseOrder {
   final int? id;

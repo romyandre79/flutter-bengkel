@@ -1,6 +1,6 @@
-import 'package:flutter_pos_offline/data/database/database_helper.dart';
-import 'package:flutter_pos_offline/data/models/order.dart';
-import 'package:flutter_pos_offline/logic/cubits/report/report_state.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/logic/cubits/report/report_state.dart';
 
 class ReportRepository {
   final DatabaseHelper _databaseHelper;

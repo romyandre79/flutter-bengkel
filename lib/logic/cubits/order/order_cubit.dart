@@ -1,12 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_pos_offline/core/utils/invoice_generator.dart';
-import 'package:flutter_pos_offline/data/models/order.dart';
-import 'package:flutter_pos_offline/data/models/order_item.dart';
-import 'package:flutter_pos_offline/data/models/payment.dart';
-import 'package:flutter_pos_offline/data/repositories/customer_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/order_repository.dart';
-import 'package:flutter_pos_offline/data/repositories/payment_repository.dart';
-import 'package:flutter_pos_offline/logic/cubits/order/order_state.dart';
+import 'package:flutter_otopart_offline/core/utils/invoice_generator.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/data/models/order_item.dart';
+import 'package:flutter_otopart_offline/data/models/payment.dart';
+import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/payment_repository.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_state.dart';
 
 class OrderCubit extends Cubit<OrderState> {
   final OrderRepository _orderRepository;

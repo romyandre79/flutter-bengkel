@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_pos_offline/core/constants/app_constants.dart';
-import 'package:flutter_pos_offline/core/utils/password_helper.dart';
+import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
+import 'package:flutter_otopart_offline/core/utils/password_helper.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();

@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_pos_offline/data/models/order.dart';
-import 'package:flutter_pos_offline/core/services/store_print.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/core/services/store_print.dart';
 
 class BluetoothDevice {
   final String name;

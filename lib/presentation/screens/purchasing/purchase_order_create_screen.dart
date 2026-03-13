@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_pos_offline/core/theme/app_theme.dart';
-import 'package:flutter_pos_offline/core/utils/currency_formatter.dart';
-import 'package:flutter_pos_offline/core/utils/date_formatter.dart';
-import 'package:flutter_pos_offline/data/models/purchase_order.dart';
-import 'package:flutter_pos_offline/data/models/purchase_order_item.dart';
-import 'package:flutter_pos_offline/data/models/supplier.dart';
-import 'package:flutter_pos_offline/logic/cubits/purchase_order/purchase_order_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/purchase_order/purchase_order_state.dart';
-import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_cubit.dart';
-import 'package:flutter_pos_offline/logic/cubits/supplier/supplier_state.dart';
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
+import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
+import 'package:flutter_otopart_offline/data/models/purchase_order.dart';
+import 'package:flutter_otopart_offline/data/models/purchase_order_item.dart';
+import 'package:flutter_otopart_offline/data/models/supplier.dart';
+import 'package:flutter_otopart_offline/logic/cubits/purchase_order/purchase_order_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/purchase_order/purchase_order_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/supplier/supplier_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/supplier/supplier_state.dart';
 
 class PurchaseOrderCreateScreen extends StatefulWidget {
   const PurchaseOrderCreateScreen({super.key});

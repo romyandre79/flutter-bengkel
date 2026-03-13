@@ -2,16 +2,16 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'POS Offline';
+  static const String appName = 'Otopart Offline';
   static const String appVersion = '1.0.0';
-  static const String appDescription = 'Aplikasi Kasir POS Offline - Full Offline, Jalan Tanpa Internet!';
+  static const String appDescription = 'Aplikasi Kasir Otopart Offline - Full Offline, Jalan Tanpa Internet!';
 
   // Database
-  static const String databaseName = 'pos_offline.db';
+  static const String databaseName = 'otopart_offline.db';
   static const int databaseVersion = 3;
 
   // Invoice
-  static const String defaultInvoicePrefix = 'POS';
+  static const String defaultInvoicePrefix = 'OTOPART';
   static const int invoiceNumberLength = 6;
 
   // Default Values

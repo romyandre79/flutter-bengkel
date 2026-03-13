@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_pos_offline/data/models/cart_item.dart';
-import 'package:flutter_pos_offline/data/models/product.dart';
+import 'package:flutter_otopart_offline/data/models/cart_item.dart';
+import 'package:flutter_otopart_offline/data/models/product.dart';
 
 abstract class PosState extends Equatable {
   const PosState();

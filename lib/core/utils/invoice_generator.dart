@@ -1,6 +1,6 @@
-import 'package:flutter_pos_offline/core/constants/app_constants.dart';
-import 'package:flutter_pos_offline/core/utils/date_formatter.dart';
-import 'package:flutter_pos_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
+import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
 
 class InvoiceGenerator {
   /// Generate invoice number
