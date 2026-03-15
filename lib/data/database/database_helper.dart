@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_pos_offline/core/constants/app_constants.dart';
-import 'package:flutter_pos_offline/core/utils/password_helper.dart';
+import 'package:kreatif_otopart/core/constants/app_constants.dart';
+import 'package:kreatif_otopart/core/utils/password_helper.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -553,6 +553,10 @@ class DatabaseHelper {
         await db.execute('ALTER TABLE products ADD COLUMN barcode TEXT');
         await db.execute('CREATE INDEX idx_products_barcode ON products(barcode)');
       }
+    }
+
+    if (oldVersion < 9) {
+      await db.execute('ALTER TABLE orders ADD COLUMN is_synced INTEGER DEFAULT 0');
     }
   }
 
