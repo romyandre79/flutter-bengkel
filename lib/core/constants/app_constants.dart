@@ -12,6 +12,7 @@ class AppConstants {
 
   // Invoice
   static const String defaultInvoicePrefix = 'OTOPART';
+  static const String defaultInvoicePrefix = 'OTOPART';
   static const int invoiceNumberLength = 6;
 
   // Default Values

@@ -1,9 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/cart_item.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
 import 'package:kreatif_otopart/data/models/customer.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/pos/pos_state.dart';
+=======
+import 'package:flutter_otopart_offline/data/models/cart_item.dart';
+import 'package:flutter_otopart_offline/data/models/product.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_state.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class PosCubit extends Cubit<PosState> {
   final ProductRepository _productRepository;

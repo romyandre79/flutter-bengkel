@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart'; // Import DateFormatter
 import 'package:kreatif_otopart/core/utils/thousand_separator_formatter.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/data/models/payment.dart';
+=======
+import 'package:flutter_otopart_offline/core/constants/colors.dart'; // Using AppColors which maps to AppThemeColors usually
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
+import 'package:flutter_otopart_offline/core/utils/thousand_separator_formatter.dart';
+import 'package:flutter_otopart_offline/data/models/payment.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 import 'package:google_fonts/google_fonts.dart';
 
 class PaymentDialog extends StatefulWidget {

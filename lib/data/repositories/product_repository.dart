@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import 'package:kreatif_otopart/data/database/database_helper.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
+=======
+import 'package:sqflite/sqflite.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/data/models/product.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ProductRepository {
   final DatabaseHelper _databaseHelper;

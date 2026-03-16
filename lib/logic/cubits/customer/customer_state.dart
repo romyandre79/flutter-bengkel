@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/customer.dart';
+=======
+import 'package:flutter_otopart_offline/data/models/customer.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 abstract class CustomerState extends Equatable {
   const CustomerState();

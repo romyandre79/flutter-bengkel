@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import 'package:kreatif_otopart/data/database/database_helper.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/data/models/order_item.dart';
 import 'package:kreatif_otopart/data/models/payment.dart';
 import 'package:kreatif_otopart/data/repositories/customer_repository.dart';
+=======
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/data/models/order_item.dart';
+import 'package:flutter_otopart_offline/data/models/payment.dart';
+import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class OrderRepository {
   final DatabaseHelper _databaseHelper;

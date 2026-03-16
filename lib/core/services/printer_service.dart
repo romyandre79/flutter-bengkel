@@ -8,6 +8,11 @@ import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:flutter_thermal_printer/flutter_thermal_printer.dart' as ftp;
 import 'package:flutter_thermal_printer/utils/printer.dart' as ftp_utils;
 import 'package:shared_preferences/shared_preferences.dart';
+<<<<<<< HEAD
+=======
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/core/services/store_print.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 enum PrinterType { bluetooth, usb, network }
 

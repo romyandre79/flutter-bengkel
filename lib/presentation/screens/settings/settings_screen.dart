@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
@@ -28,6 +29,23 @@ import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/presentation/screens/settings/unit_list_screen.dart';
 import 'package:kreatif_otopart/data/services/database_service.dart';
 import 'package:kreatif_otopart/presentation/screens/pengumuman/pengumuman_screen.dart';
+=======
+import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/data/models/user.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/settings/settings_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/settings/settings_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/user/user_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/user_management_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/printer_settings_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/product/product_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/products/product_list_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/customers/customer_list_screen.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
@@ -23,6 +24,31 @@ import 'package:kreatif_otopart/data/repositories/purchase_order_repository.dart
 import 'package:kreatif_otopart/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:kreatif_otopart/data/repositories/supplier_repository.dart';
 import 'package:kreatif_otopart/presentation/screens/pos/pos_screen.dart';
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/data/models/user.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/dashboard/dashboard_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/dashboard/dashboard_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/service/service_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/printer/printer_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_form_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_detail_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_list_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/services/service_list_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/printer_settings_screen.dart';
+import 'package:flutter_otopart_offline/presentation/widgets/order_card.dart';
+import 'package:flutter_otopart_offline/logic/cubits/product/product_cubit.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
+import 'package:flutter_otopart_offline/presentation/screens/products/product_list_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/pos/pos_screen.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class DashboardScreen extends StatefulWidget {
   final Function(int index)? onSwitchTab;

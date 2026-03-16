@@ -51,9 +51,12 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/icons/logobengkel.png"
+    image_path: "assets/icons/logobengkel.png"
     icon_size: 48
   image_path: "assets/icons/logobengkel.png"
+  image_path: "assets/icons/logobengkel.png"
   adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icons/logobengkel.png"
   adaptive_icon_foreground: "assets/icons/logobengkel.png"
 
 flutter:

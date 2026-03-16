@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/services/session_service.dart';
 import 'package:kreatif_otopart/core/utils/password_helper.dart';
 import 'package:kreatif_otopart/data/database/database_helper.dart';
 import 'package:kreatif_otopart/data/models/user.dart';
+=======
+import 'package:flutter_otopart_offline/core/services/session_service.dart';
+import 'package:flutter_otopart_offline/core/utils/password_helper.dart';
+import 'package:flutter_otopart_offline/data/database/database_helper.dart';
+import 'package:flutter_otopart_offline/data/models/user.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class AuthRepository {
   final DatabaseHelper _databaseHelper;

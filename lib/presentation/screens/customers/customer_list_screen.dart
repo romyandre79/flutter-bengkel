@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/data/models/customer.dart';
@@ -13,6 +14,15 @@ import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:kreatif_otopart/core/services/export_service.dart';
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
+import 'package:flutter_otopart_offline/data/models/customer.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_state.dart';
+import 'package:flutter_otopart_offline/presentation/screens/customers/customer_form_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/customers/customer_detail_screen.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class CustomerListScreen extends StatefulWidget {
   const CustomerListScreen({super.key});

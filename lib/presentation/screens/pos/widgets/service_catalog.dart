@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/logic/cubits/pos/pos_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/pos/pos_state.dart';
 import 'package:kreatif_otopart/presentation/screens/pos/widgets/product_item_card.dart';
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_state.dart';
+import 'package:flutter_otopart_offline/presentation/screens/pos/widgets/product_item_card.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ServiceCatalog extends StatelessWidget {
   const ServiceCatalog({super.key});

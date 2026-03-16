@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/data/models/order_item.dart';
@@ -12,6 +13,17 @@ import 'package:kreatif_otopart/data/models/customer.dart';
 import 'package:kreatif_otopart/data/repositories/customer_repository.dart';
 import 'package:kreatif_otopart/data/models/order.dart'; // Add OrderStatus import
 import 'package:kreatif_otopart/presentation/widgets/payment_dialog.dart';
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
+import 'package:flutter_otopart_offline/data/models/order_item.dart';
+import 'package:flutter_otopart_offline/data/models/payment.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_state.dart';
+import 'package:flutter_otopart_offline/presentation/widgets/payment_dialog.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class CartPanel extends StatelessWidget {
   const CartPanel({super.key});

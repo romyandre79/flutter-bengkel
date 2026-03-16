@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_state.dart';
 import 'package:kreatif_otopart/presentation/widgets/custom_text_field.dart';
 import 'package:kreatif_otopart/presentation/widgets/custom_button.dart';
+=======
+import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/presentation/widgets/custom_text_field.dart';
+import 'package:flutter_otopart_offline/presentation/widgets/custom_button.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

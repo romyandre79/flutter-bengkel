@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/data/models/user.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_cubit.dart';
@@ -24,6 +25,29 @@ import 'package:kreatif_otopart/data/repositories/customer_repository.dart';
 import 'package:kreatif_otopart/data/repositories/order_repository.dart';
 import 'package:kreatif_otopart/data/repositories/payment_repository.dart';
 
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/data/models/user.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/user/user_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/report/report_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/dashboard/dashboard_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_list_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/reports/report_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/settings/settings_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/pos/pos_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/pos/pos_cubit.dart';
+import 'package:flutter_otopart_offline/data/repositories/service_repository.dart';
+import 'package:flutter_otopart_offline/presentation/screens/purchasing/supplier_list_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/supplier/supplier_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/purchasing/purchase_order_list_screen.dart';
+import 'package:flutter_otopart_offline/logic/cubits/purchase_order/purchase_order_cubit.dart';
+import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/purchase_order_repository.dart';
+import 'package:flutter_otopart_offline/data/repositories/supplier_repository.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

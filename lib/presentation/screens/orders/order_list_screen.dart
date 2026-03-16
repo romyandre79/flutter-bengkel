@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/logic/cubits/customer/customer_cubit.dart';
@@ -13,6 +14,17 @@ import 'package:kreatif_otopart/data/repositories/unit_repository.dart';
 import 'package:kreatif_otopart/presentation/screens/orders/order_detail_screen.dart';
 import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/presentation/widgets/order_card.dart';
+=======
+import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
+import 'package:flutter_otopart_offline/logic/cubits/order/order_state.dart';
+import 'package:flutter_otopart_offline/logic/cubits/service/service_cubit.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_form_screen.dart';
+import 'package:flutter_otopart_offline/presentation/screens/orders/order_detail_screen.dart';
+import 'package:flutter_otopart_offline/presentation/widgets/order_card.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class OrderListScreen extends StatefulWidget {
   const OrderListScreen({super.key});

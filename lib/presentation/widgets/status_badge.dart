@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+<<<<<<< HEAD
 import 'package:kreatif_otopart/core/constants/colors.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
+=======
+import 'package:flutter_otopart_offline/core/constants/colors.dart';
+import 'package:flutter_otopart_offline/data/models/order.dart';
+>>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class StatusBadge extends StatelessWidget {
   final OrderStatus status;
