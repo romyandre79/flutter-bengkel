@@ -34,6 +34,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   final _customerPhoneController = TextEditingController();
   final _notesController = TextEditingController();
   final _paymentController = TextEditingController();
+  final _kmController = TextEditingController();
+  final _nopolController = TextEditingController();
 
   DateTime _dueDate = DateTime.now();
   PaymentMethod _paymentMethod = PaymentMethod.cash;
@@ -65,6 +67,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     _customerPhoneController.dispose();
     _notesController.dispose();
     _paymentController.dispose();
+    _kmController.dispose();
+    _nopolController.dispose();
     super.dispose();
   }
 
@@ -367,6 +371,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
           initialPayment: payment,
           paymentMethod: _paymentMethod,
           status: _selectedStatus,
+          kmS: int.tryParse(_kmController.text),
+          noPol: _nopolController.text.isNotEmpty ? _nopolController.text : null,
         );
   }
 
@@ -530,6 +536,33 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                         enabled: _selectedCustomer == null,
                       ),
                       keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _nopolController,
+                            decoration: const InputDecoration(
+                              labelText: 'No. Polisi',
+                              prefixIcon: Icon(Icons.directions_car_outlined),
+                              hintText: 'B 1234 ABC',
+                            ),
+                            textCapitalization: TextCapitalization.characters,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _kmController,
+                            decoration: const InputDecoration(
+                              labelText: 'KM Sekarang',
+                              prefixIcon: Icon(Icons.speed_outlined),
+                            ),
+                            keyboardType: TextInputType.number,
+                          ),
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: 24),

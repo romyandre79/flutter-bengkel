@@ -8,7 +8,7 @@ class AppConstants {
 
   // Database
   static const String databaseName = 'kreatif_otopart.db';
-  static const int databaseVersion = 9;
+  static const int databaseVersion = 12;
 
   // Invoice
   static const String defaultInvoicePrefix = 'OTOPART';
@@ -57,4 +57,10 @@ class AppConstants {
   static const String defaultStorePhone = '-';
 
   static const bool isDemoMode = true;
+
+  //Fonnte API Key
+  static const String keyFonnte = 'fontte';
+  static const String keyFonnteToken = 'fonnte_token';
+  static const String defaultFontte = '1';
+  static const String defaultFonnteToken = '';
 }

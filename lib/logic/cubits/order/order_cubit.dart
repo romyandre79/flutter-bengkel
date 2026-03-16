@@ -88,6 +88,8 @@ class OrderCubit extends Cubit<OrderState> {
     int initialPayment = 0,
     PaymentMethod paymentMethod = PaymentMethod.cash,
     OrderStatus status = OrderStatus.pending,
+    int? kmS,
+    String? noPol,
   }) async {
     if (AppConstants.isDemoMode) {
       final allOrders = await _orderRepository.getAllOrders();
@@ -162,6 +164,8 @@ class OrderCubit extends Cubit<OrderState> {
         paid: paidAmount,
         notes: notes?.trim(),
         createdBy: createdBy,
+        kmS: kmS,
+        noPol: noPol,
       );
 
       // Prepare initial payment if any

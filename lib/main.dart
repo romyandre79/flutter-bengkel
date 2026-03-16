@@ -22,7 +22,11 @@ import 'package:kreatif_otopart/data/repositories/supplier_repository.dart';
 import 'package:kreatif_otopart/data/repositories/purchase_order_repository.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
 import 'package:kreatif_otopart/data/repositories/payment_repository.dart'; // Add import
+import 'package:kreatif_otopart/data/repositories/settings_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/order/order_cubit.dart';
+import 'package:kreatif_otopart/data/repositories/service_reminder_repository.dart';
+import 'package:kreatif_otopart/logic/cubits/service_reminder/service_reminder_cubit.dart';
+import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
 import 'package:kreatif_otopart/core/services/notification_service.dart';
 
 void main() async {
@@ -75,6 +79,8 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (_) => PurchaseOrderRepository()),
         RepositoryProvider(create: (_) => ProductRepository()),         
         RepositoryProvider(create: (_) => PaymentRepository()), // Add PaymentRepository
+        RepositoryProvider(create: (_) => SettingsRepository()),
+        RepositoryProvider(create: (_) => ServiceReminderRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -90,6 +96,16 @@ class MyApp extends StatelessWidget {
               customerRepository: context.read<CustomerRepository>(), // Inject CustomerRepository
               paymentRepository: context.read<PaymentRepository>(), // Inject PaymentRepository
             )..loadOrders(),
+          ),
+          BlocProvider(
+            create: (context) => SettingsCubit(
+              repository: context.read<SettingsRepository>(),
+            )..loadSettings(),
+          ),
+          BlocProvider(
+            create: (context) => ServiceReminderCubit(
+              repository: context.read<ServiceReminderRepository>(),
+            )..loadReminders(),
           ),
         ],
         child: MaterialApp(
