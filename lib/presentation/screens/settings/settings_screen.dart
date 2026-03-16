@@ -5,6 +5,8 @@ import 'package:kreatif_otopart/core/constants/app_constants.dart';
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/data/models/user.dart';
 import 'package:kreatif_otopart/presentation/screens/settings/service_reminder_screen.dart';
+import 'package:kreatif_otopart/data/repositories/pengumuman_template_repository.dart';
+import 'package:kreatif_otopart/logic/cubits/pengumuman_template/pengumuman_template_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_state.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
@@ -26,8 +28,6 @@ import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/presentation/screens/settings/unit_list_screen.dart';
 import 'package:kreatif_otopart/data/services/database_service.dart';
 import 'package:kreatif_otopart/presentation/screens/pengumuman/pengumuman_screen.dart';
-import 'package:kreatif_otopart/logic/cubits/pengumuman_template/pengumuman_template_cubit.dart';
-import 'package:kreatif_otopart/data/repositories/pengumuman_template_repository.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -869,7 +869,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => const ServiceReminderScreen(),
+                                        builder: (_) => BlocProvider(
+                                          create: (context) => PengumumanTemplateCubit(
+                                            PengumumanTemplateRepository(),
+                                          )..loadTemplates(),
+                                          child: const ServiceReminderScreen(),
+                                        ),
                                       ),
                                     );
                                   },

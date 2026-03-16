@@ -8,6 +8,9 @@ import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_state.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:kreatif_otopart/logic/cubits/pengumuman_template/pengumuman_template_cubit.dart';
+import 'package:kreatif_otopart/logic/cubits/pengumuman_template/pengumuman_template_state.dart';
+import 'package:kreatif_otopart/data/models/pengumuman_template.dart';
 
 class ServiceReminderScreen extends StatefulWidget {
   const ServiceReminderScreen({super.key});
@@ -26,6 +29,89 @@ class _ServiceReminderScreenState extends State<ServiceReminderScreen> {
   }
 
   Future<void> _sendReminder(ServiceReminder reminder, String token) async {
+    final templatesState = context.read<PengumumanTemplateCubit>().state;
+    List<PengumumanTemplate> templates = [];
+    if (templatesState is PengumumanTemplateLoaded) {
+      templates = templatesState.templates;
+    }
+
+    if (templates.isEmpty) {
+      // Default message if no templates
+      final defaultMessage = 'Halo ${reminder.customerName}, kendaran dengan No.Pol ${reminder.noPol ?? "-"} sudah waktunya service berkala untuk ${reminder.productName}. Terakhir service di KM ${reminder.lastServiceKm}. Silakan datang ke bengkel kami. Terima kasih.';
+      await _processSend(reminder, defaultMessage, token);
+    } else {
+      // Show template picker
+      _showTemplatePicker(reminder, templates, token);
+    }
+  }
+
+  void _showTemplatePicker(ServiceReminder reminder, List<PengumumanTemplate> templates, String token) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Pilih Template Pesan',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: templates.length,
+                  itemBuilder: (context, index) {
+                    final template = templates[index];
+                    return ListTile(
+                      title: Text(template.judul),
+                      subtitle: Text(
+                        template.isi,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        String finalMessage = template.isi
+                            .replaceAll('[NAMA]', reminder.customerName)
+                            .replaceAll('[NOPOL]', reminder.noPol ?? '-')
+                            .replaceAll('[PRODUK]', reminder.productName)
+                            .replaceAll('[KM_LAST]', reminder.lastServiceKm?.toString() ?? '0')
+                            .replaceAll('[KM_NEXT]', reminder.reminderKm.toString());
+                        
+                        _processSend(reminder, finalMessage, token);
+                      },
+                    );
+                  },
+                ),
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.message_outlined),
+                title: const Text('Gunakan Pesan Default'),
+                onTap: () {
+                  Navigator.pop(context);
+                  final defaultMessage = 'Halo ${reminder.customerName}, kendaran dengan No.Pol ${reminder.noPol ?? "-"} sudah waktunya service berkala untuk ${reminder.productName}. Terakhir service di KM ${reminder.lastServiceKm}. Silakan datang ke bengkel kami. Terima kasih.';
+                  _processSend(reminder, defaultMessage, token);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _processSend(ServiceReminder reminder, String message, String token) async {
     final phone = reminder.customerPhone;
     if (phone == null || phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -40,8 +126,6 @@ class _ServiceReminderScreenState extends State<ServiceReminderScreen> {
     } else if (!formattedPhone.startsWith('62')) {
       formattedPhone = '62$formattedPhone';
     }
-
-    final message = 'Halo ${reminder.customerName}, kendaran dengan No.Pol ${reminder.noPol ?? "-"} sudah waktunya service berkala untuk ${reminder.productName}. Terakhir service di KM ${reminder.lastServiceKm}. Silakan datang ke bengkel kami. Terima kasih.';
 
     if (token.isNotEmpty) {
       // Use Fonnte
