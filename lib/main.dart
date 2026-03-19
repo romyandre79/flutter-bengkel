@@ -28,6 +28,10 @@ import 'package:kreatif_otopart/data/repositories/service_reminder_repository.da
 import 'package:kreatif_otopart/logic/cubits/service_reminder/service_reminder_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
 import 'package:kreatif_otopart/core/services/notification_service.dart';
+import 'package:kreatif_otopart/core/api/api_service.dart';
+import 'package:kreatif_otopart/core/services/sync_service.dart';
+import 'package:kreatif_otopart/logic/sync/sync_cubit.dart';
+import 'package:kreatif_otopart/logic/cubits/user/user_cubit.dart';
 
 
 void main() async {
@@ -82,6 +86,13 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (_) => PaymentRepository()), // Add PaymentRepository
         RepositoryProvider(create: (_) => SettingsRepository()),
         RepositoryProvider(create: (_) => ServiceReminderRepository()),
+        RepositoryProvider(create: (_) => ApiService()),
+        RepositoryProvider(
+          create: (context) => SyncService(
+            apiService: context.read<ApiService>(),
+            dbHelper: DatabaseHelper.instance,
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -107,6 +118,16 @@ class MyApp extends StatelessWidget {
             create: (context) => ServiceReminderCubit(
               repository: context.read<ServiceReminderRepository>(),
             )..loadReminders(),
+          ),
+          BlocProvider(
+            create: (context) => SyncCubit(
+              context.read<SyncService>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => UserCubit(
+              userRepository: context.read<UserRepository>(),
+            )..loadUsers(),
           ),
         ],
         child: MaterialApp(

@@ -28,6 +28,11 @@ import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/presentation/screens/settings/unit_list_screen.dart';
 import 'package:kreatif_otopart/data/services/database_service.dart';
 import 'package:kreatif_otopart/presentation/screens/pengumuman/pengumuman_screen.dart';
+import 'package:kreatif_otopart/logic/sync/sync_cubit.dart';
+import 'package:kreatif_otopart/logic/sync/sync_state.dart';
+import 'package:kreatif_otopart/core/api/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:kreatif_otopart/core/api/api_config.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -200,6 +205,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showServerUrlDialog() async {
+    final prefs = await SharedPreferences.getInstance();
+    final currentUrl = prefs.getString('api_base_url') ?? ApiConfig.baseUrl;
+
+    _showEditDialog(
+      title: 'Server URL',
+      currentValue: currentUrl,
+      hint: 'https://api.example.com',
+      icon: Icons.cloud,
+      onSave: (value) async {
+        await prefs.setString('api_base_url', value);
+        if (mounted) {
+          context.read<ApiService>().setBaseUrl(value);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Server URL updated'),
+              backgroundColor: AppThemeColors.success,
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -401,6 +430,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
             }
           },
         ),
+        BlocListener<SyncCubit, SyncState>(
+          listener: (context, state) {
+            if (state is SyncSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppThemeColors.success,
+                ),
+              );
+            } else if (state is SyncFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                  backgroundColor: AppThemeColors.error,
+                ),
+              );
+            } else if (state is SyncLoading) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppThemeColors.primary,
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            }
+          },
+        ),
       ],
       child: Scaffold(
         backgroundColor: AppThemeColors.background,
@@ -431,6 +487,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         padding: EdgeInsets.zero,
                         children: [
                           const SizedBox(height: AppSpacing.lg),
+
+_buildSection(
+                            title: 'Server Sync',
+                            children: [
+                              _buildSettingTile(
+                                context: context,
+                                icon: Icons.cloud,
+                                title: 'Server URL',
+                                subtitle: 'Atur URL server untuk sinkronisasi',
+                                onTap: _showServerUrlDialog,
+                              ),
+                              _buildDivider(),
+                              _buildSettingTile(
+                                context: context,
+                                icon: Icons.sync,
+                                title: 'Sync Data',
+                                subtitle: 'Upload transaksi & download master data',
+                                onTap: () {
+                                  context.read<SyncCubit>().syncData();
+                                },
+                              ),
+                            ],
+                          ),
 
                           // Store Info Section
                           _buildSection(
@@ -658,10 +737,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                        create: (_) => UserCubit(),
-                                        child: const UserManagementScreen(),
-                                      ),
+                                      builder: (_) => const UserManagementScreen(),
                                     ),
                                   );
                                 },

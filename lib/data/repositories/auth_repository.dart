@@ -50,6 +50,9 @@ class AuthRepository {
       name: user.name,
     );
 
+    // Cache password for sync operations
+    session.cachePassword(password);
+
     return user;
   }
 
