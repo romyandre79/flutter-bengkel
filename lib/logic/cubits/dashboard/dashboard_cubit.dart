@@ -1,15 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/data/repositories/order_repository.dart';
 import 'package:kreatif_otopart/data/repositories/payment_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/dashboard/dashboard_state.dart';
-=======
-import 'package:flutter_otopart_offline/data/models/order.dart';
-import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/payment_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/dashboard/dashboard_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class DashboardCubit extends Cubit<DashboardState> {
   final OrderRepository _orderRepository;

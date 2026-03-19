@@ -5,11 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-<<<<<<< HEAD
 	<string>Kreatif - Otopart</string>
-=======
-	<string>Kreatif - POS (offline)</string>
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

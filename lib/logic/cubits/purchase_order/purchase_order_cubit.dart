@@ -1,14 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/purchase_order.dart';
 import 'package:kreatif_otopart/data/repositories/purchase_order_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/purchase_order/purchase_order_state.dart';
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
-=======
-import 'package:flutter_otopart_offline/data/models/purchase_order.dart';
-import 'package:flutter_otopart_offline/data/repositories/purchase_order_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/purchase_order/purchase_order_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class PurchaseOrderCubit extends Cubit<PurchaseOrderState> {
   final PurchaseOrderRepository _repository;

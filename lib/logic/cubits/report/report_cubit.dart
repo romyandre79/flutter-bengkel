@@ -1,13 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/repositories/report_repository.dart';
 import 'package:kreatif_otopart/core/services/export_service.dart';
 import 'package:kreatif_otopart/logic/cubits/report/report_state.dart';
-=======
-import 'package:flutter_otopart_offline/data/repositories/report_repository.dart';
-import 'package:flutter_otopart_offline/core/services/export_service.dart';
-import 'package:flutter_otopart_offline/logic/cubits/report/report_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ReportCubit extends Cubit<ReportState> {
   final ReportRepository _reportRepository;

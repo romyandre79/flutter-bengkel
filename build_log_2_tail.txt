@@ -1,0 +1,100 @@
+﻿[ +141 ms] MSBuild version 17.14.40+3e7442088 for .NET Framework
+[ +570 ms] -- Configuring done (4.8s)
+[ +342 ms] -- Generating done (0.3s)
+[   +2 ms] -- Build files have been written to: C:/lara/www/kreatif-otopart/build/windows/x64
+[  +27 ms] executing: C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe --build C:\lara\www\kreatif-otopart\build\windows\x64 --config Release --target INSTALL --verbose
+[  +78 ms] Change Dir: 'C:/lara/www/kreatif-otopart/build/windows/x64'
+[        ] Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" INSTALL.vcxproj /p:Configuration=Release /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+[  +88 ms] MSBuild version 17.14.40+3e7442088 for .NET Framework
+[  +40 ms] Build started 19/03/2026 06:46:29.
+[ +230 ms] Project "C:\lara\www\kreatif-otopart\build\windows\x64\INSTALL.vcxproj" on node 1 (default targets).
+[        ] Project "C:\lara\www\kreatif-otopart\build\windows\x64\INSTALL.vcxproj" (1) is building "C:\lara\www\kreatif-otopart\build\windows\x64\ZERO_CHECK.vcxproj" (2) on node 1 (default targets).
+[        ] PrepareForBuild:
+[        ]   Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+[   +4 ms] InitializeBuildStatus:
+[        ]   Creating "x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+[        ]   Touching "x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild".
+[  +15 ms] CustomBuild:
+[        ]   All outputs are up-to-date.
+[  +29 ms] FinalizeBuildStatus:
+[        ]   Deleting file "x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\unsuccessfulbuild".
+[        ]   Touching "x64\Release\ZERO_CHECK\ZERO_CHECK.tlog\ZERO_CHECK.lastbuildstate".
+[        ] Done Building Project "C:\lara\www\kreatif-otopart\build\windows\x64\ZERO_CHECK.vcxproj" (default targets).
+[  +81 ms] Project "C:\lara\www\kreatif-otopart\build\windows\x64\INSTALL.vcxproj" (1) is building "C:\lara\www\kreatif-otopart\build\windows\x64\ALL_BUILD.vcxproj" (3) on node 1 (default targets).
+[        ] Project "C:\lara\www\kreatif-otopart\build\windows\x64\ALL_BUILD.vcxproj" (3) is building "C:\lara\www\kreatif-otopart\build\windows\x64\plugins\file_selector_windows\file_selector_windows_plugin.vcxproj" (4) on node 1 (default targets).
+[        ] Project "C:\lara\www\kreatif-otopart\build\windows\x64\plugins\file_selector_windows\file_selector_windows_plugin.vcxproj" (4) is building "C:\lara\www\kreatif-otopart\build\windows\x64\flutter\flutter_assemble.vcxproj" (5) on node 1 (default targets).
+[        ] PrepareForBuild:
+[        ]   Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+[   +2 ms] InitializeBuildStatus:
+[        ]   Touching "x64\Release\flutter_assemble\flutter_assemble.tlog\unsuccessfulbuild".
+[   +9 ms] CustomBuild:
+[        ]   "The build of 'C:\lara\www\kreatif-otopart\build\windows\x64\CMakeFiles\31dda3b63c4735700f36a835737290f7\flutter_assemble.rule' depends on 'C:\LARA\WWW\KREATIF-OTOPART\WINDOWS\FLUTTER\EPHEMERAL\FLUTTER_WINDOWS.DLL' which is produced by the build of 'C:\lara\www\kreatif-otopart\build\windows\x64\CMakeFiles\05555c4648fa50251e7067323287587f\flutter_windows.dll.rule'. The items cannot be built in parallel."
+[ +109 ms]   Generating C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_windows.dll, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_export.h, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_windows.h, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_messenger.h, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_plugin_registrar.h, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/flutter_texture_registrar.h, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/cpp_client_wrapper/core_implementations.cc, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/cpp_client_wrapper/standard_codec.cc, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/cpp_client_wrapper/plugin_registrar.cc, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/cpp_client_wrapper/flutter_engine.cc, C:/lara/www/kreatif-otopart/windows/flutter/ephemeral/cpp_client_wrapper/flutter_view_controller.cc, _phony_
+[+2033 ms]   [ +160 ms] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ]   [   +1 ms] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ]   [   +1 ms] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ]   [   +1 ms] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[   +2 ms]   [  +13 ms] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[   +2 ms]   [   +3 ms] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[  +73 ms]   [  +75 ms] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[   +1 ms]   [   +1 ms] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[   +2 ms]   [        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ]   [        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[  +41 ms]   [  +43 ms] Initializing file store
+[  +35 ms]   [  +35 ms] Done initializing file store
+[ +113 ms]   [ +113 ms] Skipping target: dart_build
+[   +5 ms]   [   +5 ms] Skipping target: gen_dart_plugin_registrant
+[+2601 ms]   [+2601 ms] Skipping target: unpack_windows
+[  +10 ms]   [  +10 ms] Skipping target: install_code_assets
+[        ]   [        ] Skipping target: gen_localizations
+[+2864 ms]   [+2864 ms] kernel_snapshot_program: Starting due to {InvalidatedReasonKind.outputSetAddition: The following outputs were added to the output set: C:\lara\www\kreatif-otopart\.dart_tool\flutter_build\0a88d4b546f5c9a4c332ea26fa5c926a\app.dill, InvalidatedReasonKind.inputChanged: The following inputs have updated contents: C:\lara\www\kreatif-otopart\lib\core\constants\app_constants.dart}
+[  +20 ms]   [  +20 ms] C:\flutter\bin\cache\dart-sdk\bin\dartaotruntime.exe C:\flutter\bin\cache\dart-sdk\bin\snapshots\frontend_server_aot.dart.snapshot --sdk-root C:\flutter\bin\cache\artifacts\engine\common\flutter_patched_sdk_product/ --target=flutter --no-print-incremental-dependencies -DFLUTTER_VERSION=3.41.5 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=2c9eb20739 -DFLUTTER_ENGINE_REVISION=052f31d115 -DFLUTTER_DART_VERSION=3.11.3 -Ddart.vm.profile=false -Ddart.vm.product=true --delete-tostring-package-uri=dart:ui --delete-tostring-package-uri=package:flutter --aot --tfa --target-os windows --packages C:\lara\www\kreatif-otopart\.dart_tool\package_config.json --output-dill C:\lara\www\kreatif-otopart\.dart_tool\flutter_build\0a88d4b546f5c9a4c332ea26fa5c926a\app.dill --depfile C:\lara\www\kreatif-otopart\.dart_tool\flutter_build\0a88d4b546f5c9a4c332ea26fa5c926a\kernel_snapshot_program.d --source file:///C:/lara/www/kreatif-otopart/.dart_tool/flutter_build/dart_plugin_registrant.dart --source package:flutter/src/dart_plugin_registrant.dart -Dflutter.dart_plugin_registrant=file:///C:/lara/www/kreatif-otopart/.dart_tool/flutter_build/dart_plugin_registrant.dart --verbosity=error package:kreatif_otopart/main.dart

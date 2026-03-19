@@ -1,13 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
 import 'package:kreatif_otopart/data/repositories/settings_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_state.dart';
-=======
-import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
-import 'package:flutter_otopart_offline/data/repositories/settings_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/settings/settings_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository _repository;

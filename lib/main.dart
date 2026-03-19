@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
 import 'package:kreatif_otopart/data/database/database_helper.dart';
@@ -29,26 +28,7 @@ import 'package:kreatif_otopart/data/repositories/service_reminder_repository.da
 import 'package:kreatif_otopart/logic/cubits/service_reminder/service_reminder_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
 import 'package:kreatif_otopart/core/services/notification_service.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
-import 'package:flutter_otopart_offline/data/database/database_helper.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
-import 'package:flutter_otopart_offline/presentation/screens/auth/login_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/main_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/onboarding/onboarding_screen.dart';
-import 'package:flutter_otopart_offline/data/repositories/auth_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/report_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/service_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/user_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/supplier_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/purchase_order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

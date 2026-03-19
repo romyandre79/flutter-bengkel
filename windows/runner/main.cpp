@@ -27,11 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   FlutterWindow window(project);
   Win32Window::Point origin(10, 10);
   Win32Window::Size size(1280, 720);
-<<<<<<< HEAD
   if (!window.Create(L"Kreatif - Otopart", origin, size)) {
-=======
-  if (!window.Create(L"Kreatif - POS (offline)", origin, size)) {
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

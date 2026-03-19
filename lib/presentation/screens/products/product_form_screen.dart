@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
 import 'package:kreatif_otopart/logic/cubits/product/product_cubit.dart';
@@ -17,11 +16,6 @@ import 'package:kreatif_otopart/data/models/user.dart';
 import 'package:kreatif_otopart/data/models/unit.dart';
 import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/unit/unit_state.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/data/models/product.dart';
-import 'package:flutter_otopart_offline/logic/cubits/product/product_cubit.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ProductFormScreen extends StatefulWidget {
   final Product? product;

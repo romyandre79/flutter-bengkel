@@ -1,9 +1,5 @@
 import 'package:equatable/equatable.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/services/printer_service.dart';
-=======
-import 'package:flutter_otopart_offline/core/services/printer_service.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 abstract class PrinterState extends Equatable {
   const PrinterState();
