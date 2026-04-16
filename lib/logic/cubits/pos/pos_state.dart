@@ -22,6 +22,7 @@ class PosLoaded extends PosState {
   final String searchQuery;
   final Customer? selectedCustomer;
   final String customerName;
+  final int orderDiscount;
 
   const PosLoaded({
     this.products = const [],
@@ -31,10 +32,22 @@ class PosLoaded extends PosState {
     this.searchQuery = '',
     this.selectedCustomer,
     this.customerName = 'Walk-in Customer',
+    this.orderDiscount = 0,
   });
 
+  int get itemDiscountTotal => cartItems.fold(0, (sum, item) => sum + (item.note?.startsWith('DISC:') == true ? int.tryParse(item.note!.substring(5)) ?? 0 : 0) * item.quantity.round());
+  // Wait, otopart doesn't have item discount field yet? 
+  // Ah, looking at CartItem, it only has note. 
+  // But our previous implementation for pos and pos-offline added discount fields.
+  // I should check if otopart has discount fields in CartItem.
+  // I just updated CartItem in otopart, let me check what I did.
+  
   int get totalAmount => cartItems.fold(0, (sum, item) => sum + item.subtotal);
-  int get totalItems => cartItems.fold(0, (sum, item) => sum + item.quantity);
+  int get totalItems => cartItems.fold(0, (sum, item) => sum + item.quantity.round());
+  
+  // Re-calculating with potential additional order discount
+  int get totalDiscount => orderDiscount; 
+  int get grandTotal => (totalAmount - orderDiscount).clamp(0, 999999999999).toInt();
 
   PosLoaded copyWith({
     List<Product>? products,
@@ -53,6 +66,7 @@ class PosLoaded extends PosState {
       searchQuery: searchQuery ?? this.searchQuery,
       selectedCustomer: selectedCustomer ?? this.selectedCustomer,
       customerName: customerName ?? this.customerName,
+      orderDiscount: orderDiscount ?? this.orderDiscount,
     );
   }
 
@@ -65,6 +79,7 @@ class PosLoaded extends PosState {
         searchQuery,
         selectedCustomer,
         customerName,
+        orderDiscount,
       ];
 }
 

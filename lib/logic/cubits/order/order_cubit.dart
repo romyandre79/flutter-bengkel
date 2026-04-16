@@ -90,6 +90,7 @@ class OrderCubit extends Cubit<OrderState> {
     OrderStatus status = OrderStatus.pending,
     int? kmS,
     String? noPol,
+    int totalDiscount = 0,
   }) async {
     if (AppConstants.isDemoMode) {
       final allOrders = await _orderRepository.getAllOrders();
@@ -140,14 +141,16 @@ class OrderCubit extends Cubit<OrderState> {
         totalWeight += item.quantity;
         totalPrice += item.subtotal;
       }
+      
+      final grandTotal = (totalPrice - totalDiscount).toInt();
 
       // Generate invoice
       final invoiceNo = await InvoiceGenerator.generate();
 
       // Hitung kembalian (jika bayar lebih dari total)
-      final change = initialPayment > totalPrice ? initialPayment - totalPrice : 0;
-      // Yang dicatat sebagai "paid" di order adalah maksimal = totalPrice
-      final paidAmount = initialPayment > totalPrice ? totalPrice : initialPayment;
+      final change = initialPayment > grandTotal ? initialPayment - grandTotal : 0;
+      // Yang dicatat sebagai "paid" di order adalah maksimal = grandTotal
+      final paidAmount = initialPayment > grandTotal ? grandTotal : initialPayment;
 
       // Create order
       final order = Order(
@@ -160,7 +163,8 @@ class OrderCubit extends Cubit<OrderState> {
         status: status,
         totalItems: totalItems,
         totalWeight: totalWeight,
-        totalPrice: totalPrice,
+        totalPrice: grandTotal,
+        totalDiscount: totalDiscount,
         paid: paidAmount,
         notes: notes?.trim(),
         createdBy: createdBy,
@@ -188,10 +192,14 @@ class OrderCubit extends Cubit<OrderState> {
         initialPayment: payment,
       );
 
-      // Deduct stock for each item
+      // Deduct stock for each item using unitId if available
       for (final item in items) {
         if (item.productId != null) {
-          await _productRepository.updateStock(item.productId!, -(item.quantity));
+          await _productRepository.updateStock(
+            item.productId!, 
+            -item.quantity, 
+            unitId: item.unitId,
+          );
         }
       }
 

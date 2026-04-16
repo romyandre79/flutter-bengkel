@@ -26,6 +26,7 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
   final _nameController = TextEditingController();
   final _qtyController = TextEditingController();
   final _priceController = TextEditingController();
+  final _discountController = TextEditingController();
   final _searchController = TextEditingController();
   
   Product? _selectedProduct;
@@ -42,6 +43,7 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
       _nameController.text = item.serviceName;
       _qtyController.text = item.quantity.toString(); // Double is fine
       _priceController.text = item.pricePerUnit.toString();
+      _discountController.text = item.discount.toString();
       _selectedUnit = item.unit;
       
       // Attempt to link back to product
@@ -68,6 +70,7 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
     _nameController.dispose();
     _qtyController.dispose();
     _priceController.dispose();
+    _discountController.dispose();
     super.dispose();
   }
 
@@ -123,6 +126,7 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
     
     final qty = double.tryParse(_qtyController.text) ?? 0;
     final price = int.tryParse(_priceController.text) ?? 0;
+    final discount = int.tryParse(_discountController.text) ?? 0;
     
     if (qty <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -155,7 +159,8 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
       quantity: qty,
       unit: _selectedUnit,
       pricePerUnit: price,
-      subtotal: (qty * price).round(),
+      discount: discount,
+      subtotal: ((price - discount) * qty).round(),
     );
     
     Navigator.pop(context, item);
@@ -317,6 +322,21 @@ class _SalesOrderItemEditorState extends State<SalesOrderItemEditor> {
                 prefixText: 'Rp ',
                 border: OutlineInputBorder(),
                 helperText: 'Harga jual per unit',
+              ),
+            ),
+            
+            const SizedBox(height: AppSpacing.lg),
+            
+            // Discount
+            Text('Diskon (Rp)', style: AppTypography.labelMedium),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _discountController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                prefixText: 'Rp ',
+                border: OutlineInputBorder(),
+                helperText: 'Diskon per unit',
               ),
             ),
             

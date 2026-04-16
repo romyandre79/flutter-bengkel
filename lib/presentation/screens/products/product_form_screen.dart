@@ -12,8 +12,8 @@ import 'package:kreatif_otopart/logic/cubits/product/product_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_state.dart';
 import 'package:kreatif_otopart/logic/cubits/auth/auth_state.dart';
-import 'package:kreatif_otopart/data/models/user.dart';
 import 'package:kreatif_otopart/data/models/unit.dart';
+import 'package:kreatif_otopart/data/models/product_unit.dart';
 import 'package:kreatif_otopart/logic/cubits/unit/unit_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/unit/unit_state.dart';
 
@@ -43,6 +43,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
   ProductType _selectedType = ProductType.service;
   String _selectedUnit = 'pcs';
+  List<ProductUnit> _units = [];
 
   @override
   void initState() {
@@ -61,6 +62,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     if (product != null) {
       _selectedType = product.type;
       _selectedUnit = product.unit;
+      _units = List<ProductUnit>.from(product.units);
       if (product.imageUrl != null) {
         _imageFile = File(product.imageUrl!);
       }
@@ -198,6 +200,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         imageUrl: imagePath ?? widget.product?.imageUrl,
         expireDate: int.tryParse(_expireDateController.text),
         expireKm: int.tryParse(_expireKmController.text),
+        units: _units,
       );
 
       if (widget.product == null) {
@@ -561,6 +564,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
 
               const SizedBox(height: AppSpacing.xxl),
 
+            // Unit Management
+              if (_selectedType == ProductType.goods) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _buildUnitManagement(),
+              ],
+
+              const SizedBox(height: AppSpacing.xxl),
+              
               // Submit Button
               SizedBox(
                 width: double.infinity,
@@ -588,6 +599,140 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         ),
       ),
     );
+  }
+
+  Widget _buildUnitManagement() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Manajemen Satuan', style: AppTypography.titleMedium),
+            TextButton.icon(
+              onPressed: _addUnit,
+              icon: const Icon(Icons.add),
+              label: const Text('Tambah Satuan'),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (_units.isEmpty)
+          Center(
+            child: Text(
+              'Belum ada satuan tambahan.\nKlik tambah untuk membuat urutan satuan (pcs > pack > box).',
+              style: AppTypography.bodySmall.copyWith(color: AppThemeColors.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+          )
+        else
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _units.length,
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (context, index) {
+              final unit = _units[index];
+              return Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadius.mdRadius,
+                  borderSide: BorderSide(color: AppThemeColors.border),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: BlocBuilder<UnitCubit, UnitState>(
+                              builder: (context, state) {
+                                List<Unit> units = [];
+                                if (state is UnitLoaded) units = state.units;
+                                return DropdownButtonFormField<String>(
+                                  value: units.any((u) => u.name == unit.unitName) ? unit.unitName : null,
+                                  decoration: const InputDecoration(labelText: 'Nama Satuan'),
+                                  items: units.map((u) => DropdownMenuItem(value: u.name, child: Text(u.name))).toList(),
+                                  onChanged: (val) {
+                                    if (val != null) {
+                                      setState(() => _units[index] = unit.copyWith(unitName: val));
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            flex: 2,
+                            child: TextFormField(
+                              initialValue: unit.price.toString(),
+                              decoration: const InputDecoration(labelText: 'Harga Jual', prefixText: 'Rp '),
+                              keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                final price = int.tryParse(val) ?? 0;
+                                setState(() => _units[index] = unit.copyWith(price: price));
+                              },
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.red),
+                            onPressed: () => setState(() => _units.removeAt(index)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              initialValue: unit.multiplier.toString(),
+                              decoration: InputDecoration(
+                                labelText: 'Isi (Multiplier)',
+                                helperText: index == 0 ? 'Satuan Dasar (1.0)' : 'Isi per ${index > 0 ? _units[index - 1].unitName : 'Dasar'}',
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                final mult = double.tryParse(val) ?? 1.0;
+                                setState(() => _units[index] = unit.copyWith(multiplier: mult));
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: TextFormField(
+                              initialValue: unit.stock.toString(),
+                              decoration: const InputDecoration(labelText: 'Stok Awal'),
+                              keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                final st = double.tryParse(val) ?? 0.0;
+                                setState(() => _units[index] = unit.copyWith(stock: st));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  void _addUnit() {
+    setState(() {
+      _units.add(ProductUnit(
+        unitName: _units.isEmpty ? _selectedUnit : 'pack',
+        price: int.tryParse(_priceController.text) ?? 0,
+        multiplier: _units.isEmpty ? 1.0 : 10.0,
+        stock: _units.isEmpty ? (double.tryParse(_stockController.text) ?? 0.0) : 0.0,
+      ));
+    });
   }
 
   Widget _buildTypeRadio(ProductType type) {

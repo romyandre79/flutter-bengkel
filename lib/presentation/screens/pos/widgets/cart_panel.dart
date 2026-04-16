@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kreatif_otopart/data/models/product_unit.dart';
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/data/models/order_item.dart';
@@ -36,12 +37,12 @@ class CartPanel extends StatelessWidget {
       }
 
       if (item.product.isGoods) {
-        final currentStock = item.product.stock ?? 0;
+        final currentStock = item.selectedUnit?.stock ?? item.product.stock ?? 0;
         if (item.quantity > currentStock) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                  'Stok ${item.product.name} tidak mencukupi (Sisa: ${currentStock.toStringAsFixed(0)})'),
+                  'Stok ${item.product.name} (${item.selectedUnit?.unitName ?? item.product.unit}) tidak mencukupi (Sisa: ${currentStock.toStringAsFixed(0)})'),
               backgroundColor: AppThemeColors.error,
             ),
           );
@@ -78,14 +79,19 @@ class CartPanel extends StatelessWidget {
 
     // Convert CartItems to OrderItems
     final orderItems = cartItems.map((item) {
+      final unitId = item.selectedUnit?.id;
+      final unitName = item.selectedUnit?.unitName ?? item.product.unit;
+      final price = item.selectedUnit?.price ?? item.product.price;
+      
       return OrderItem(
         orderId: 0, // Placeholder
         productId: item.product.id,
-        serviceName: item.product.name, // Using serviceName for product name compatibility
-        quantity: item.quantity.toDouble(),
-        unit: item.product.unit,
-        pricePerUnit: item.product.price,
+        serviceName: item.product.name,
+        quantity: item.quantity,
+        unit: unitName,
+        pricePerUnit: price,
         subtotal: item.subtotal,
+        unitId: unitId,
       );
     }).toList();
 
@@ -94,11 +100,12 @@ class CartPanel extends StatelessWidget {
       customerId: posState.selectedCustomer?.id,
       customerPhone: posState.selectedCustomer?.phone,
       items: orderItems,
-      dueDate: dueDate, // Pass the selected due date
+      dueDate: dueDate,
       initialPayment: paidAmount,
       paymentMethod: paymentMethod,
       status: status,
-      createdBy: 1, // TODO: Get from AuthCubit
+      createdBy: 1, 
+      totalDiscount: posState.orderDiscount,
     );
   }
 
@@ -220,8 +227,36 @@ class CartPanel extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(item.product.name, style: AppTypography.bodyMedium),
+                                    if (item.product.units.isNotEmpty)
+                                      SizedBox(
+                                        height: 30,
+                                        child: DropdownButton<ProductUnit>(
+                                          value: item.selectedUnit,
+                                          isDense: true,
+                                          underline: const SizedBox(),
+                                          items: item.product.units.map((u) {
+                                            return DropdownMenuItem(
+                                              value: u,
+                                              child: Text(
+                                                u.unitName,
+                                                style: AppTypography.labelSmall,
+                                              ),
+                                            );
+                                          }).toList(),
+                                          onChanged: (val) {
+                                            if (val != null) {
+                                              context.read<PosCubit>().updateUnit(item, val);
+                                            }
+                                          },
+                                        ),
+                                      )
+                                    else
+                                      Text(
+                                        item.product.unit,
+                                        style: AppTypography.labelSmall.copyWith(color: AppThemeColors.textSecondary),
+                                      ),
                                     Text(
-                                      '@ ${CurrencyFormatter.format(item.product.price)}',
+                                      '@ ${CurrencyFormatter.format(item.selectedUnit?.price ?? item.product.price)}',
                                       style: AppTypography.bodySmall,
                                     ),
                                   ],
@@ -259,12 +294,25 @@ class CartPanel extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
+                      if (state.orderDiscount > 0) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Diskon Order', style: AppTypography.bodySmall),
+                            Text(
+                              '- ${CurrencyFormatter.format(state.orderDiscount)}',
+                              style: AppTypography.bodySmall.copyWith(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                      ],
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('Total', style: AppTypography.titleMedium),
                           Text(
-                            CurrencyFormatter.format(total),
+                            CurrencyFormatter.format(state.grandTotal),
                             style: AppTypography.titleLarge.copyWith(color: AppThemeColors.primary),
                           ),
                         ],
@@ -276,11 +324,11 @@ class CartPanel extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                           ),
-                          onPressed: total > 0 
-                            ? () => _handleCharge(context, total)
+                          onPressed: state.grandTotal > 0 
+                            ? () => _handleCharge(context, state.grandTotal)
                             : null,
                           child: Text(
-                             total > 0 ? 'Bayar ${CurrencyFormatter.format(total)}' : 'Bayar',
+                             state.grandTotal > 0 ? 'Bayar ${CurrencyFormatter.format(state.grandTotal)}' : 'Bayar',
                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),

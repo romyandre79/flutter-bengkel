@@ -9,7 +9,9 @@ class OrderItem extends Equatable {
   final double quantity;
   final String unit;
   final int pricePerUnit;
+  final int discount;
   final int subtotal;
+  final int? unitId;
 
   const OrderItem({
     this.id,
@@ -20,7 +22,9 @@ class OrderItem extends Equatable {
     required this.quantity,
     required this.unit,
     required this.pricePerUnit,
+    this.discount = 0,
     required this.subtotal,
+    this.unitId,
   });
 
   Map<String, dynamic> toMap() {
@@ -33,7 +37,9 @@ class OrderItem extends Equatable {
       'quantity': quantity,
       'unit': unit,
       'price_per_unit': pricePerUnit,
+      'discount': discount,
       'subtotal': subtotal,
+      'unit_id': unitId,
     };
   }
 
@@ -47,7 +53,9 @@ class OrderItem extends Equatable {
       quantity: (map['quantity'] as num).toDouble(),
       unit: map['unit'] as String,
       pricePerUnit: map['price_per_unit'] as int,
+      discount: (map['discount'] as int?) ?? 0,
       subtotal: map['subtotal'] as int,
+      unitId: map['unit_id'] as int?,
     );
   }
 
@@ -60,6 +68,7 @@ class OrderItem extends Equatable {
     double? quantity,
     String? unit,
     int? pricePerUnit,
+    int? discount,
     int? subtotal,
   }) {
     return OrderItem(
@@ -71,13 +80,15 @@ class OrderItem extends Equatable {
       quantity: quantity ?? this.quantity,
       unit: unit ?? this.unit,
       pricePerUnit: pricePerUnit ?? this.pricePerUnit,
+      discount: discount ?? this.discount,
       subtotal: subtotal ?? this.subtotal,
+      unitId: unitId ?? this.unitId,
     );
   }
 
   // Helper: Calculate subtotal from quantity and price
-  static int calculateSubtotal(double quantity, int pricePerUnit) {
-    return (quantity * pricePerUnit).round();
+  static int calculateSubtotal(double quantity, int pricePerUnit, [int discount = 0]) {
+    return ((pricePerUnit - discount) * quantity).round();
   }
 
   @override
@@ -90,6 +101,8 @@ class OrderItem extends Equatable {
         quantity,
         unit,
         pricePerUnit,
+        discount,
         subtotal,
+        unitId,
       ];
 }

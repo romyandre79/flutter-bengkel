@@ -78,6 +78,7 @@ class DatabaseHelper {
         total_orders INTEGER DEFAULT 0,
         total_spent INTEGER DEFAULT 0,
         last_order_date TEXT,
+        default_discount REAL DEFAULT 0,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -96,23 +97,39 @@ class DatabaseHelper {
       )
     ''');
 
-    // Create Products table
+      )
+    ''');
+
+    // Create Product Units table
     await db.execute('''
-      CREATE TABLE products (
+      CREATE TABLE product_units (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        description TEXT,
+        product_id INTEGER NOT NULL,
+        unit_name TEXT NOT NULL,
         price INTEGER NOT NULL,
         cost INTEGER DEFAULT 0,
-        stock INTEGER,
-        unit TEXT NOT NULL,
-        type TEXT NOT NULL, -- service, goods
-        duration_days INTEGER,
-        image_url TEXT,
-        barcode TEXT,
-        is_active INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        multiplier REAL DEFAULT 1.0,
+        parent_unit_id INTEGER,
+        stock REAL DEFAULT 0.0,
+        FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+        FOREIGN KEY (parent_unit_id) REFERENCES product_units (id) ON DELETE SET NULL
+      )
+    ''');
+
+    // Create Unit Conversions table
+    await db.execute('''
+      CREATE TABLE unit_conversions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product_id INTEGER NOT NULL,
+        from_unit_id INTEGER NOT NULL,
+        to_unit_id INTEGER NOT NULL,
+        from_qty REAL NOT NULL,
+        to_qty REAL NOT NULL,
+        multiplier REAL NOT NULL,
+        conversion_date TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+        FOREIGN KEY (from_unit_id) REFERENCES product_units (id) ON DELETE CASCADE,
+        FOREIGN KEY (to_unit_id) REFERENCES product_units (id) ON DELETE CASCADE
       )
     ''');
 
@@ -130,6 +147,7 @@ class DatabaseHelper {
         total_items INTEGER DEFAULT 0,
         total_weight REAL DEFAULT 0,
         total_price INTEGER NOT NULL,
+        total_discount INTEGER DEFAULT 0,
         paid INTEGER DEFAULT 0,
         notes TEXT,
         created_by INTEGER,
@@ -152,11 +170,14 @@ class DatabaseHelper {
         quantity REAL NOT NULL,
         unit TEXT NOT NULL,
         price_per_unit INTEGER NOT NULL,
+        discount INTEGER DEFAULT 0,
         subtotal INTEGER NOT NULL,
         product_id INTEGER,
+        unit_id INTEGER,
         FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
         FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE SET NULL,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL,
+        FOREIGN KEY (unit_id) REFERENCES product_units(id) ON DELETE SET NULL
       )
     ''');
 
@@ -313,6 +334,10 @@ class DatabaseHelper {
     await db.execute('CREATE INDEX idx_reminders_customer ON service_reminders(customer_id)');
     await db.execute('CREATE INDEX idx_reminders_status ON service_reminders(status)');
     await db.execute('CREATE INDEX idx_reminders_km ON service_reminders(reminder_km)');
+
+    // Product Units indexes
+    await db.execute('CREATE INDEX idx_product_units_product ON product_units(product_id)');
+    await db.execute('CREATE INDEX idx_product_units_parent ON product_units(parent_unit_id)');
   }
 
   Future<void> _seedData(Database db) async {
@@ -637,6 +662,71 @@ class DatabaseHelper {
       await db.execute('CREATE INDEX IF NOT EXISTS idx_reminders_customer ON service_reminders(customer_id)');
       await db.execute('CREATE INDEX IF NOT EXISTS idx_reminders_status ON service_reminders(status)');
       await db.execute('CREATE INDEX IF NOT EXISTS idx_reminders_km ON service_reminders(reminder_km)');
+    }
+
+    if (oldVersion < 13) {
+      // Add discount fields
+      await db.execute('ALTER TABLE customers ADD COLUMN default_discount REAL DEFAULT 0');
+      await db.execute('ALTER TABLE orders ADD COLUMN total_discount INTEGER DEFAULT 0');
+      await db.execute('ALTER TABLE order_items ADD COLUMN discount INTEGER DEFAULT 0');
+    }
+
+    if (oldVersion < 14) {
+      // 1. Create product_units table
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS product_units (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          product_id INTEGER NOT NULL,
+          unit_name TEXT NOT NULL,
+          price INTEGER NOT NULL,
+          cost INTEGER DEFAULT 0,
+          multiplier REAL DEFAULT 1.0,
+          parent_unit_id INTEGER,
+          stock REAL DEFAULT 0.0,
+          FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+          FOREIGN KEY (parent_unit_id) REFERENCES product_units (id) ON DELETE SET NULL
+        )
+      ''');
+
+      // 2. Create unit_conversions table
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS unit_conversions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          product_id INTEGER NOT NULL,
+          from_unit_id INTEGER NOT NULL,
+          to_unit_id INTEGER NOT NULL,
+          from_qty REAL NOT NULL,
+          to_qty REAL NOT NULL,
+          multiplier REAL NOT NULL,
+          conversion_date TEXT DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE,
+          FOREIGN KEY (from_unit_id) REFERENCES product_units (id) ON DELETE CASCADE,
+          FOREIGN KEY (to_unit_id) REFERENCES product_units (id) ON DELETE CASCADE
+        )
+      ''');
+
+      // 3. Migrate existing products to product_units (as base units)
+      final List<Map<String, dynamic>> products = await db.query('products', where: 'type = ?', whereArgs: ['goods']);
+      for (final p in products) {
+        await db.insert('product_units', {
+          'product_id': p['id'],
+          'unit_name': p['unit'],
+          'price': p['price'],
+          'cost': p['cost'] ?? 0,
+          'multiplier': 1.0,
+          'stock': (p['stock'] as num?)?.toDouble() ?? 0.0,
+        });
+      }
+
+      // 4. Add unit_id to order_items
+      final List<Map<String, dynamic>> tableInfo = await db.rawQuery('PRAGMA table_info(order_items)');
+      final bool hasUnitId = tableInfo.any((column) => column['name'] == 'unit_id');
+      if (!hasUnitId) {
+        await db.execute('ALTER TABLE order_items ADD COLUMN unit_id INTEGER');
+      }
+
+      // 5. Create indexes
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_product_units_product ON product_units(product_id)');
     }
   }
 

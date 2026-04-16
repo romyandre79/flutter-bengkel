@@ -41,6 +41,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   PaymentMethod _paymentMethod = PaymentMethod.cash;
   OrderStatus _selectedStatus = OrderStatus.pending;
   bool _isLoading = false;
+  int _orderDiscount = 0;
 
   // Selected customer
   Customer? _selectedCustomer;
@@ -51,6 +52,8 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   int get _totalPrice {
     return _items.fold(0, (sum, item) => sum + item.subtotal);
   }
+
+  int get _netPrice => _totalPrice - _orderDiscount;
 
   @override
   void initState() {
@@ -174,6 +177,16 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       _selectedCustomer = customer;
       _customerNameController.text = customer.name;
       _customerPhoneController.text = customer.phone ?? '';
+
+      // Apply default discount to all items
+      for (int i = 0; i < _items.length; i++) {
+        final item = _items[i];
+        final discountPerUnit = ((item.pricePerUnit * customer.defaultDiscount) / 100).round();
+        _items[i] = item.copyWith(
+          discount: discountPerUnit,
+          subtotal: ((item.pricePerUnit - discountPerUnit) * item.quantity).round(),
+        );
+      }
     });
   }
 
@@ -182,6 +195,16 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
       _selectedCustomer = null;
       _customerNameController.clear();
       _customerPhoneController.clear();
+
+      // Reset discount for all items
+      for (int i = 0; i < _items.length; i++) {
+        final item = _items[i];
+        _items[i] = item.copyWith(
+          discount: 0,
+          subtotal: (item.pricePerUnit * item.quantity).round(),
+        );
+      }
+      _orderDiscount = 0;
     });
   }
 
@@ -228,7 +251,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
     }
 
     // Jika bayar lebih dari total, tampilkan dialog konfirmasi kembalian
-    if (payment > _totalPrice) {
+    if (payment > _netPrice) {
       _showChangeConfirmationDialog(payment);
     } else {
       _submitOrder(payment);
@@ -236,7 +259,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
   }
 
   void _showChangeConfirmationDialog(int payment) {
-    final change = payment - _totalPrice;
+    final change = payment - _netPrice;
 
     showDialog(
       context: context,
@@ -276,7 +299,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
               ),
               child: Column(
                 children: [
-                  _buildPaymentRow('Total', CurrencyFormatter.format(_totalPrice)),
+                   _buildPaymentRow('Total Harus Bayar', CurrencyFormatter.format(_netPrice)),
                   const SizedBox(height: 8),
                   _buildPaymentRow('Bayar', CurrencyFormatter.format(payment)),
                   const Divider(height: 16),
@@ -370,6 +393,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
           createdBy: userId,
           initialPayment: payment,
           paymentMethod: _paymentMethod,
+          totalDiscount: _orderDiscount,
           status: _selectedStatus,
           kmS: int.tryParse(_kmController.text),
           noPol: _nopolController.text.isNotEmpty ? _nopolController.text : null,
@@ -627,13 +651,26 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                                 item.serviceName,
                                 style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                               ),
-                              subtitle: Text(
-                                '${item.quantity} ${item.unit} x ${CurrencyFormatter.format(item.pricePerUnit)}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: AppThemeColors.textSecondary,
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${item.quantity} ${item.unit} x ${CurrencyFormatter.format(item.pricePerUnit)}',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: AppThemeColors.textSecondary,
+                                      ),
+                                    ),
+                                    if (item.discount > 0)
+                                      Text(
+                                        'Diskon: -${CurrencyFormatter.format(item.discount)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          color: AppThemeColors.error,
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                              ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -797,17 +834,63 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total',
+                          'Total Penjualan',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                            color: AppThemeColors.textSecondary,
+                            fontSize: 12,
                           ),
                         ),
                         Text(
-                          CurrencyFormatter.format(_totalPrice),
+                          CurrencyFormatter.format(_items.fold(0, (sum, item) => sum + (item.pricePerUnit * item.quantity).round())),
                           style: GoogleFonts.poppins(
-                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    InkWell(
+                      onTap: _showOrderDiscountDialog,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Diskon Tambahan (Klik)',
+                            style: GoogleFonts.poppins(
+                              color: AppThemeColors.primary,
+                              fontSize: 12,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                          Text(
+                            '-${CurrencyFormatter.format(_orderDiscount)}',
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: AppThemeColors.error,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Total Bayar',
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: AppThemeColors.primary,
+                          ),
+                        ),
+                        Text(
+                          CurrencyFormatter.format(_netPrice),
+                          style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
+                            fontSize: 20,
                             color: AppThemeColors.primary,
                           ),
                         ),
@@ -816,13 +899,19 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                     const SizedBox(height: 16),
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleSubmit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppThemeColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                         child: _isLoading
                             ? const SizedBox(
-                                width: 24,
-                                height: 24,
+                                width: 20,
+                                height: 20,
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
                                   strokeWidth: 2,
@@ -833,6 +922,7 @@ class _OrderFormScreenState extends State<OrderFormScreen> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
                               ),
                       ),

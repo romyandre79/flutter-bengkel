@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kreatif_otopart/data/models/cart_item.dart';
+import 'package:kreatif_otopart/data/models/product_unit.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
 import 'package:kreatif_otopart/data/models/customer.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
@@ -69,29 +70,50 @@ class PosCubit extends Cubit<PosState> {
   }
 
   // Add product to cart
-  void addToCart(Product product) {
+  void addToCart(Product product, {ProductUnit? unit}) {
     if (state is PosLoaded) {
       final currentState = state as PosLoaded;
       final currentCart = List<CartItem>.from(currentState.cartItems);
 
-      // Check if product already in cart
-      final existingIndex = currentCart.indexWhere((item) => item.product.id == product.id);
+      // Check if product already in cart with same unit
+      final existingIndex = currentCart.indexWhere((item) => 
+        item.product.id == product.id && 
+        (item.selectedUnit?.id == unit?.id)
+      );
 
       if (existingIndex >= 0) {
-        // Increment quantity
         final existingItem = currentCart[existingIndex];
         currentCart[existingIndex] = existingItem.copyWith(
           quantity: existingItem.quantity + 1,
         );
       } else {
-        // Add new item
         currentCart.add(CartItem(
           product: product,
           quantity: 1,
+          selectedUnit: unit ?? product.baseUnit,
         ));
       }
 
       emit(currentState.copyWith(cartItems: currentCart));
+    }
+  }
+
+  void updateUnit(CartItem item, ProductUnit unit) {
+    if (state is PosLoaded) {
+      final currentState = state as PosLoaded;
+      final currentCart = List<CartItem>.from(currentState.cartItems);
+      
+      final index = currentCart.indexOf(item);
+      if (index >= 0) {
+        currentCart[index] = item.copyWith(selectedUnit: unit);
+        emit(currentState.copyWith(cartItems: currentCart));
+      }
+    }
+  }
+
+  void updateOrderDiscount(int discount) {
+    if (state is PosLoaded) {
+      emit((state as PosLoaded).copyWith(orderDiscount: discount));
     }
   }
 
@@ -101,7 +123,7 @@ class PosCubit extends Cubit<PosState> {
       final currentState = state as PosLoaded;
       final currentCart = List<CartItem>.from(currentState.cartItems);
 
-      final index = currentCart.indexWhere((i) => i.product.id == item.product.id);
+      final index = currentCart.indexOf(item);
       if (index >= 0) {
         if (currentCart[index].quantity > 1) {
           currentCart[index] = currentCart[index].copyWith(
