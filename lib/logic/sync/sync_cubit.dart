@@ -10,10 +10,26 @@ class SyncCubit extends Cubit<SyncState> {
   Future<void> syncData() async {
     emit(const SyncLoading('Syncing data...'));
     try {
+      emit(const SyncLoading('Uploading sales...'));
+      final uploadedCount = await _syncService.uploadOrders();
+      
+      emit(const SyncLoading('Uploading purchasing...'));
+      final poCount = await _syncService.uploadPurchaseOrders();
+      
       emit(const SyncLoading('Downloading master data...'));
       await _syncService.downloadMasterData();
       
-      emit(const SyncSuccess('Sync completed.'));
+      emit(SyncSuccess('Sinkronisasi selesai. ${uploadedCount + poCount} transaksi terkirim.'));
+    } catch (e) {
+      emit(SyncFailure(e.toString()));
+    }
+  }
+
+  Future<void> uploadTransactions() async {
+    emit(const SyncLoading('Uploading transactions...'));
+    try {
+      final uploadedCount = await _syncService.uploadOrders();
+      emit(SyncSuccess('Berhasil mengirim $uploadedCount transaksi.'));
     } catch (e) {
       emit(SyncFailure(e.toString()));
     }
@@ -23,7 +39,7 @@ class SyncCubit extends Cubit<SyncState> {
     emit(const SyncLoading('Downloading master data...'));
     try {
       await _syncService.downloadMasterData();
-      emit(const SyncSuccess('Master data updated successfully.'));
+      emit(const SyncSuccess('Data master berhasil diperbarui.'));
     } catch (e) {
       emit(SyncFailure(e.toString()));
     }

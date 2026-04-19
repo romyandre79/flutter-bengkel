@@ -51,6 +51,7 @@ class Product extends Equatable {
   final DateTime? updatedAt;
   final int? expireDate;
   final int? expireKm;
+  final int? serverId;
   final List<ProductUnit> units;
 
   const Product({
@@ -70,6 +71,7 @@ class Product extends Equatable {
     this.updatedAt,
     this.expireDate,
     this.expireKm,
+    this.serverId,
     this.units = const [],
   });
 
@@ -102,6 +104,7 @@ class Product extends Equatable {
       'updated_at': updatedAt?.toIso8601String(),
       'expire_date': expireDate,
       'expire_km': expireKm,
+      'server_id': serverId,
       'price': units.isNotEmpty ? units.first.price : price,
       'stock': units.isNotEmpty ? units.first.stock : stock,
     };
@@ -129,6 +132,7 @@ class Product extends Equatable {
           : null,
       expireDate: map['expire_date'] as int?,
       expireKm: map['expire_km'] as int?,
+      serverId: map['server_id'] as int?,
       units: (map['units'] as List?)?.map((u) => ProductUnit.fromMap(u)).toList() ?? [],
     );
   }
@@ -150,6 +154,7 @@ class Product extends Equatable {
     DateTime? updatedAt,
     int? expireDate,
     int? expireKm,
+    int? serverId,
   }) {
     return Product(
       id: id ?? this.id,
@@ -168,6 +173,7 @@ class Product extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
       expireDate: expireDate ?? this.expireDate,
       expireKm: expireKm ?? this.expireKm,
+      serverId: serverId ?? this.serverId,
       units: units ?? this.units,
     );
   }
@@ -190,6 +196,7 @@ class Product extends Equatable {
         updatedAt,
         expireDate,
         expireKm,
+        serverId,
         units,
       ];
 }

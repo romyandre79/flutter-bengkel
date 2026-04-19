@@ -33,6 +33,7 @@ import 'package:kreatif_otopart/logic/sync/sync_state.dart';
 import 'package:kreatif_otopart/core/api/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kreatif_otopart/core/api/api_config.dart';
+import 'package:kreatif_otopart/core/services/session_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -457,6 +458,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             }
           },
         ),
+        BlocListener<SyncCubit, SyncState>(
+          listener: (context, state) {
+            if (state is SyncSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppThemeColors.success,
+                ),
+              );
+            } else if (state is SyncFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                  backgroundColor: AppThemeColors.error,
+                ),
+              );
+            }
+          },
+        ),
       ],
       child: Scaffold(
         backgroundColor: AppThemeColors.background,
@@ -752,6 +772,57 @@ _buildSection(
                               ),
                             ],
                           ),
+
+                          // Sync Section
+                          _buildSection(
+                            title: 'Sinkronisasi Server',
+                            children: [
+                              BlocBuilder<SyncCubit, SyncState>(
+                                builder: (context, state) {
+                                  final isLoading = state is SyncLoading;
+                                  return _buildSettingTile(
+                                    context: context,
+                                    icon: isLoading ? Icons.sync : Icons.cloud_sync,
+                                    title: 'Sinkronisasi Data',
+                                    subtitle: isLoading 
+                                        ? (state as SyncLoading).message 
+                                        : 'Upload transaksi & download master data',
+                                    onTap: isLoading ? null : () => context.read<SyncCubit>().syncData(),
+                                    trailing: isLoading 
+                                        ? const SizedBox(
+                                            width: 20, 
+                                            height: 20, 
+                                            child: CircularProgressIndicator(strokeWidth: 2)
+                                          )
+                                        : null,
+                                  );
+                                },
+                              ),
+                              _buildDivider(),
+                              _buildSettingTile(
+                                context: context,
+                                icon: Icons.settings_remote,
+                                title: 'Pengaturan Server',
+                                subtitle: 'Atur alamat URL server sinkronisasi',
+                                onTap: () async {
+                                  final session = await SessionService.getInstance();
+                                  final currentUrl = session.getBaseUrl() ?? '';
+                                  if (context.mounted) {
+                                    _showEditDialog(
+                                      title: 'Alamat Server',
+                                      currentValue: currentUrl,
+                                      hint: 'https://api.yourserver.com',
+                                      icon: Icons.dns,
+                                      onSave: (value) async {
+                                        await session.setBaseUrl(value);
+                                      },
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+
 
                           // Database Management Section
                           if (user != null && user.role == UserRole.owner)
@@ -1184,6 +1255,7 @@ _buildSection(
     required String subtitle,
     VoidCallback? onTap,
     bool showArrow = true,
+    Widget? trailing,
   }) {
     return Material(
       color: Colors.transparent,
@@ -1227,8 +1299,13 @@ _buildSection(
                   ],
                 ),
               ),
+              // Trailing widget
+              if (trailing != null) ...[
+                const SizedBox(width: AppSpacing.md),
+                trailing,
+              ],
               // Arrow or edit icon
-              if (showArrow && onTap != null)
+              if (showArrow && onTap != null && trailing == null)
                 Container(
                   width: 28,
                   height: 28,

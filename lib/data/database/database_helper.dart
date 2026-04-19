@@ -79,6 +79,7 @@ class DatabaseHelper {
         total_spent INTEGER DEFAULT 0,
         last_order_date TEXT,
         default_discount REAL DEFAULT 0,
+        server_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -153,6 +154,8 @@ class DatabaseHelper {
         created_by INTEGER,
         km_s INTEGER DEFAULT 0,
         no_pol TEXT,
+        is_synced INTEGER DEFAULT 0,
+        server_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL,
@@ -215,6 +218,7 @@ class DatabaseHelper {
         address TEXT,
         phone TEXT,
         email TEXT,
+        server_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -230,6 +234,8 @@ class DatabaseHelper {
         status TEXT NOT NULL, -- pending, received, cancelled
         total_amount INTEGER DEFAULT 0,
         notes TEXT,
+        is_synced INTEGER DEFAULT 0,
+        server_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE
@@ -258,6 +264,7 @@ class DatabaseHelper {
       CREATE TABLE units (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT UNIQUE NOT NULL,
+        server_id INTEGER,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP,
         updated_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
@@ -478,6 +485,7 @@ class DatabaseHelper {
           duration_days INTEGER,
           image_url TEXT,
           is_active INTEGER DEFAULT 1,
+          server_id INTEGER,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP,
           updated_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
@@ -727,6 +735,28 @@ class DatabaseHelper {
 
       // 5. Create indexes
       await db.execute('CREATE INDEX IF NOT EXISTS idx_product_units_product ON product_units(product_id)');
+    }
+
+    if (oldVersion < 15) {
+      // Add missing sync columns
+      await db.execute('ALTER TABLE orders ADD COLUMN server_id INTEGER');
+      
+      // Check if products has server_id
+      final pColumns = await db.rawQuery('PRAGMA table_info(products)');
+      if (!pColumns.any((c) => c['name'] == 'server_id')) {
+        await db.execute('ALTER TABLE products ADD COLUMN server_id INTEGER');
+      }
+      
+      await db.execute('ALTER TABLE customers ADD COLUMN server_id INTEGER');
+      await db.execute('ALTER TABLE suppliers ADD COLUMN server_id INTEGER');
+      
+      final uColumns = await db.rawQuery('PRAGMA table_info(units)');
+      if (!uColumns.any((c) => c['name'] == 'server_id')) {
+        await db.execute('ALTER TABLE units ADD COLUMN server_id INTEGER');
+      }
+
+      await db.execute('ALTER TABLE purchase_orders ADD COLUMN is_synced INTEGER DEFAULT 0');
+      await db.execute('ALTER TABLE purchase_orders ADD COLUMN server_id INTEGER');
     }
   }
 
