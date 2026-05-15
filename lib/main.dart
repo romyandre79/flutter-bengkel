@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
 import 'package:kreatif_otopart/data/database/database_helper.dart';
@@ -29,26 +28,11 @@ import 'package:kreatif_otopart/data/repositories/service_reminder_repository.da
 import 'package:kreatif_otopart/logic/cubits/service_reminder/service_reminder_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/settings/settings_cubit.dart';
 import 'package:kreatif_otopart/core/services/notification_service.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
-import 'package:flutter_otopart_offline/data/database/database_helper.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
-import 'package:flutter_otopart_offline/presentation/screens/auth/login_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/main_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/onboarding/onboarding_screen.dart';
-import 'package:flutter_otopart_offline/data/repositories/auth_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/report_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/service_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/user_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/supplier_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/purchase_order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
+import 'package:kreatif_otopart/core/api/api_service.dart';
+import 'package:kreatif_otopart/core/services/sync_service.dart';
+import 'package:kreatif_otopart/logic/sync/sync_cubit.dart';
+import 'package:kreatif_otopart/logic/cubits/user/user_cubit.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -102,6 +86,13 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (_) => PaymentRepository()), // Add PaymentRepository
         RepositoryProvider(create: (_) => SettingsRepository()),
         RepositoryProvider(create: (_) => ServiceReminderRepository()),
+        RepositoryProvider(create: (_) => ApiService()),
+        RepositoryProvider(
+          create: (context) => SyncService(
+            apiService: context.read<ApiService>(),
+            dbHelper: DatabaseHelper.instance,
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -127,6 +118,16 @@ class MyApp extends StatelessWidget {
             create: (context) => ServiceReminderCubit(
               repository: context.read<ServiceReminderRepository>(),
             )..loadReminders(),
+          ),
+          BlocProvider(
+            create: (context) => SyncCubit(
+              context.read<SyncService>(),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => UserCubit(
+              userRepository: context.read<UserRepository>(),
+            )..loadUsers(),
           ),
         ],
         child: MaterialApp(

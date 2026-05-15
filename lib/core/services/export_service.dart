@@ -3,7 +3,6 @@ import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:share_plus/share_plus.dart' show SharePlus, ShareParams, XFile;
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/data/models/purchase_order.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
@@ -12,12 +11,7 @@ import 'package:kreatif_otopart/data/models/purchase_order_item.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
 import 'package:kreatif_otopart/logic/cubits/report/report_state.dart';
-=======
-import 'package:flutter_otopart_offline/data/models/order.dart';
-import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
-import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
-import 'package:flutter_otopart_offline/logic/cubits/report/report_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
+
 
 class ExportService {
   static final ExportService _instance = ExportService._internal();

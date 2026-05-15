@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/database/database_helper.dart';
 import 'package:kreatif_otopart/data/models/purchase_order.dart';
 import 'package:kreatif_otopart/data/models/purchase_order_item.dart';
 import 'package:kreatif_otopart/data/models/supplier.dart';
-=======
-import 'package:flutter_otopart_offline/data/database/database_helper.dart';
-import 'package:flutter_otopart_offline/data/models/purchase_order.dart';
-import 'package:flutter_otopart_offline/data/models/purchase_order_item.dart';
-import 'package:flutter_otopart_offline/data/models/supplier.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class PurchaseOrderRepository {
   final DatabaseHelper _databaseHelper;

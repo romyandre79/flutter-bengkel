@@ -1,16 +1,10 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/services/import_service.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/product/product_state.dart';
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
-=======
-import 'package:flutter_otopart_offline/data/models/product.dart';
-import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/product/product_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ProductCubit extends Cubit<ProductState> {
   final ProductRepository _productRepository;

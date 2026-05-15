@@ -1,16 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/models/cart_item.dart';
+import 'package:kreatif_otopart/data/models/product_unit.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
 import 'package:kreatif_otopart/data/models/customer.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/pos/pos_state.dart';
-=======
-import 'package:flutter_otopart_offline/data/models/cart_item.dart';
-import 'package:flutter_otopart_offline/data/models/product.dart';
-import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/pos/pos_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class PosCubit extends Cubit<PosState> {
   final ProductRepository _productRepository;
@@ -55,7 +49,8 @@ class PosCubit extends Cubit<PosState> {
       String currentCategory = category ?? currentState.selectedCategory;
 
       List<Product> filtered = currentState.products.where((product) {
-        bool matchesQuery = product.name.toLowerCase().contains(currentQuery.toLowerCase());
+        bool matchesQuery = product.name.toLowerCase().contains(currentQuery.toLowerCase()) ||
+            (product.barcode != null && product.barcode!.toLowerCase().contains(currentQuery.toLowerCase()));
         bool matchesCategory = true;
 
           if (currentCategory == 'Kiloan') {
@@ -76,29 +71,50 @@ class PosCubit extends Cubit<PosState> {
   }
 
   // Add product to cart
-  void addToCart(Product product) {
+  void addToCart(Product product, {ProductUnit? unit}) {
     if (state is PosLoaded) {
       final currentState = state as PosLoaded;
       final currentCart = List<CartItem>.from(currentState.cartItems);
 
-      // Check if product already in cart
-      final existingIndex = currentCart.indexWhere((item) => item.product.id == product.id);
+      // Check if product already in cart with same unit
+      final existingIndex = currentCart.indexWhere((item) => 
+        item.product.id == product.id && 
+        (item.selectedUnit?.id == unit?.id)
+      );
 
       if (existingIndex >= 0) {
-        // Increment quantity
         final existingItem = currentCart[existingIndex];
         currentCart[existingIndex] = existingItem.copyWith(
           quantity: existingItem.quantity + 1,
         );
       } else {
-        // Add new item
         currentCart.add(CartItem(
           product: product,
           quantity: 1,
+          selectedUnit: unit ?? product.baseUnit,
         ));
       }
 
       emit(currentState.copyWith(cartItems: currentCart));
+    }
+  }
+
+  void updateUnit(CartItem item, ProductUnit unit) {
+    if (state is PosLoaded) {
+      final currentState = state as PosLoaded;
+      final currentCart = List<CartItem>.from(currentState.cartItems);
+      
+      final index = currentCart.indexOf(item);
+      if (index >= 0) {
+        currentCart[index] = item.copyWith(selectedUnit: unit);
+        emit(currentState.copyWith(cartItems: currentCart));
+      }
+    }
+  }
+
+  void updateOrderDiscount(int discount) {
+    if (state is PosLoaded) {
+      emit((state as PosLoaded).copyWith(orderDiscount: discount));
     }
   }
 
@@ -108,7 +124,7 @@ class PosCubit extends Cubit<PosState> {
       final currentState = state as PosLoaded;
       final currentCart = List<CartItem>.from(currentState.cartItems);
 
-      final index = currentCart.indexWhere((i) => i.product.id == item.product.id);
+      final index = currentCart.indexOf(item);
       if (index >= 0) {
         if (currentCart[index].quantity > 1) {
           currentCart[index] = currentCart[index].copyWith(

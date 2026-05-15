@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/data/models/customer.dart';
 import 'package:kreatif_otopart/logic/cubits/customer/customer_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/customer/customer_state.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/data/models/customer.dart';
-import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/customer/customer_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class CustomerFormScreen extends StatefulWidget {
   final Customer? customer;
@@ -27,6 +20,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _notesController = TextEditingController();
+  final _defaultDiscountController = TextEditingController();
 
   bool get isEditing => widget.customer != null;
 
@@ -38,6 +32,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
       _phoneController.text = widget.customer!.phone ?? '';
       _addressController.text = widget.customer!.address ?? '';
       _notesController.text = widget.customer!.notes ?? '';
+      _defaultDiscountController.text = widget.customer!.defaultDiscount.toString();
     }
   }
 
@@ -47,6 +42,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
     _phoneController.dispose();
     _addressController.dispose();
     _notesController.dispose();
+    _defaultDiscountController.dispose();
     super.dispose();
   }
 
@@ -65,6 +61,7 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
       notes: _notesController.text.trim().isEmpty
           ? null
           : _notesController.text.trim(),
+      defaultDiscount: double.tryParse(_defaultDiscountController.text) ?? 0,
       totalOrders: widget.customer?.totalOrders ?? 0,
       totalSpent: widget.customer?.totalSpent ?? 0,
       createdAt: widget.customer?.createdAt,
@@ -120,6 +117,11 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
 
                       // Form Card
                       _buildFormCard(),
+
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Discount Card
+                      _buildDiscountCard(),
 
                       const SizedBox(height: AppSpacing.lg),
 
@@ -329,6 +331,61 @@ class _CustomerFormScreenState extends State<CustomerFormScreen> {
             decoration: _buildInputDecoration(
               hintText: 'Catatan tambahan (opsional)',
               prefixIcon: Icons.note_outlined,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDiscountCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: AppRadius.lgRadius,
+        boxShadow: AppShadows.card,
+      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  gradient: AppThemeColors.primaryGradient,
+                  borderRadius: AppRadius.fullRadius,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                'Otomasi Diskon',
+                style: AppTypography.titleSmall.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          _buildInputLabel('Default Diskon Member (%)'),
+          const SizedBox(height: AppSpacing.sm),
+          TextFormField(
+            controller: _defaultDiscountController,
+            style: AppTypography.bodyMedium,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            textInputAction: TextInputAction.done,
+            decoration: _buildInputDecoration(
+              hintText: 'Contoh: 10',
+              prefixIcon: Icons.percent_outlined,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Diskon ini akan otomatis teraplikasi saat pelanggan dipilih.',
+            style: AppTypography.bodySmall.copyWith(
+              color: AppThemeColors.textSecondary,
             ),
           ),
         ],

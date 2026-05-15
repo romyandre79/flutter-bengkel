@@ -6,9 +6,11 @@ class SessionService {
   static const String _keyUserRole = 'user_role';
   static const String _keyUserName = 'user_name';
   static const String _keyIsLoggedIn = 'is_logged_in';
+  static const String _keyBaseUrl = 'server_base_url';
 
   static SessionService? _instance;
   static SharedPreferences? _prefs;
+  static String? _cachedPassword;
 
   SessionService._();
 
@@ -30,6 +32,21 @@ class SessionService {
     await _prefs!.setString(_keyUserRole, role);
     await _prefs!.setString(_keyUserName, name);
     await _prefs!.setBool(_keyIsLoggedIn, true);
+  }
+
+  /// Cache password in memory for sync operations
+  void cachePassword(String password) {
+    _cachedPassword = password;
+  }
+
+  /// Get cached password
+  String? getCachedPassword() {
+    return _cachedPassword;
+  }
+
+  /// Check if we have credentials for sync
+  bool hasCachedCredentials() {
+    return getUsername() != null && _cachedPassword != null;
   }
 
   /// Get saved user ID
@@ -64,7 +81,15 @@ class SessionService {
     await _prefs!.remove(_keyUserRole);
     await _prefs!.remove(_keyUserName);
     await _prefs!.setBool(_keyIsLoggedIn, false);
+    await _prefs!.remove(_keyBaseUrl);
+    _cachedPassword = null;
   }
+
+  Future<void> setBaseUrl(String url) async {
+    await _prefs!.setString(_keyBaseUrl, url);
+  }
+
+  String? getBaseUrl() => _prefs!.getString(_keyBaseUrl);
 
   /// Get all session data as Map
   Map<String, dynamic> getSessionData() {
@@ -74,6 +99,7 @@ class SessionService {
       'role': getUserRole(),
       'name': getUserName(),
       'isLoggedIn': isLoggedIn(),
+      'hasCachedCredentials': hasCachedCredentials(),
     };
   }
 }

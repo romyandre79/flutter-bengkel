@@ -8,10 +8,9 @@ class AppConstants {
 
   // Database
   static const String databaseName = 'kreatif_otopart.db';
-  static const int databaseVersion = 12;
+  static const int databaseVersion = 15;
 
   // Invoice
-  static const String defaultInvoicePrefix = 'OTOPART';
   static const String defaultInvoicePrefix = 'OTOPART';
   static const int invoiceNumberLength = 6;
 

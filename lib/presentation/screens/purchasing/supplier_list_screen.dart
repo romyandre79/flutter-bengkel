@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/supplier/supplier_state.dart';
@@ -14,12 +13,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/logic/cubits/supplier/supplier_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/supplier/supplier_state.dart';
-import 'package:flutter_otopart_offline/presentation/screens/purchasing/supplier_form_screen.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class SupplierListScreen extends StatefulWidget {
   const SupplierListScreen({super.key});

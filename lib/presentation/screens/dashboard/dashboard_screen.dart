@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/utils/currency_formatter.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
@@ -24,31 +23,7 @@ import 'package:kreatif_otopart/data/repositories/purchase_order_repository.dart
 import 'package:kreatif_otopart/logic/cubits/supplier/supplier_cubit.dart';
 import 'package:kreatif_otopart/data/repositories/supplier_repository.dart';
 import 'package:kreatif_otopart/presentation/screens/pos/pos_screen.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/core/utils/currency_formatter.dart';
-import 'package:flutter_otopart_offline/data/models/order.dart';
-import 'package:flutter_otopart_offline/data/models/user.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/auth/auth_state.dart';
-import 'package:flutter_otopart_offline/logic/cubits/customer/customer_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/dashboard/dashboard_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/dashboard/dashboard_state.dart';
-import 'package:flutter_otopart_offline/logic/cubits/order/order_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/service/service_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/printer/printer_cubit.dart';
-import 'package:flutter_otopart_offline/presentation/screens/orders/order_form_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/orders/order_detail_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/orders/order_list_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/services/service_list_screen.dart';
-import 'package:flutter_otopart_offline/presentation/screens/settings/printer_settings_screen.dart';
-import 'package:flutter_otopart_offline/presentation/widgets/order_card.dart';
-import 'package:flutter_otopart_offline/logic/cubits/product/product_cubit.dart';
-import 'package:flutter_otopart_offline/data/repositories/product_repository.dart';
-import 'package:flutter_otopart_offline/presentation/screens/products/product_list_screen.dart';
-import 'package:flutter_otopart_offline/logic/cubits/pos/pos_cubit.dart';
-import 'package:flutter_otopart_offline/presentation/screens/pos/pos_screen.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
+import 'package:kreatif_otopart/presentation/screens/inventory/unit_conversion_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Function(int index)? onSwitchTab;
@@ -388,18 +363,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        Row(
+        Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.md,
           children: [
-            Expanded(
+            SizedBox(
+              width: (MediaQuery.of(context).size.width - AppSpacing.lg * 2 - AppSpacing.md * 2) / 3,
               child: _buildQuickActionItem(
                 icon: MediaQuery.of(context).size.width > 800 ? Icons.point_of_sale : Icons.receipt_long,
                 label: MediaQuery.of(context).size.width > 800 ? 'Kasir' : 'Penjualan',
                 color: AppThemeColors.primary,
                 onTap: () {
                   if (widget.onSwitchTab != null) {
-                    widget.onSwitchTab!(1); // Index 1 is usually Sales/Kasir
+                    widget.onSwitchTab!(1);
                   } else {
-                    // Fallback (keep existing behavior just in case)
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -419,15 +396,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
+            SizedBox(
+              width: (MediaQuery.of(context).size.width - AppSpacing.lg * 2 - AppSpacing.md * 2) / 3,
               child: _buildQuickActionItem(
                 icon: Icons.shopping_bag,
                 label: 'Pembelian',
                 color: AppThemeColors.primary,
                 onTap: () {
                   if (widget.onSwitchTab != null) {
-                    widget.onSwitchTab!(2); // Index 2 is usually Purchasing
+                    widget.onSwitchTab!(2);
                   } else {
                     Navigator.push(
                       context,
@@ -453,8 +430,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
               ),
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
+            SizedBox(
+              width: (MediaQuery.of(context).size.width - AppSpacing.lg * 2 - AppSpacing.md * 2) / 3,
               child: _buildQuickActionItem(
                 icon: Icons.print,
                 label: 'Printer',
@@ -467,6 +444,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         create: (_) => PrinterCubit(),
                         child: const PrinterSettingsScreen(),
                       ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: (MediaQuery.of(context).size.width - AppSpacing.lg * 2 - AppSpacing.md * 2) / 3,
+              child: _buildQuickActionItem(
+                icon: Icons.swap_horiz,
+                label: 'Konversi',
+                color: AppThemeColors.info,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const UnitConversionScreen(),
                     ),
                   );
                 },

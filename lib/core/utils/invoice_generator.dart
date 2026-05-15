@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
 import 'package:kreatif_otopart/core/utils/date_formatter.dart';
 import 'package:kreatif_otopart/data/database/database_helper.dart';
-=======
-import 'package:flutter_otopart_offline/core/constants/app_constants.dart';
-import 'package:flutter_otopart_offline/core/utils/date_formatter.dart';
-import 'package:flutter_otopart_offline/data/database/database_helper.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class InvoiceGenerator {
   /// Generate invoice number

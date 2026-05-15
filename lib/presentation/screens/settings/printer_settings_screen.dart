@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/theme/app_theme.dart';
 import 'package:kreatif_otopart/core/services/printer_service.dart';
 import 'package:kreatif_otopart/logic/cubits/printer/printer_cubit.dart';
 import 'package:kreatif_otopart/logic/cubits/printer/printer_state.dart';
-=======
-import 'package:flutter_otopart_offline/core/theme/app_theme.dart';
-import 'package:flutter_otopart_offline/core/services/printer_service.dart';
-import 'package:flutter_otopart_offline/logic/cubits/printer/printer_cubit.dart';
-import 'package:flutter_otopart_offline/logic/cubits/printer/printer_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 import 'package:permission_handler/permission_handler.dart';
 
 class PrinterSettingsScreen extends StatefulWidget {

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import 'package:kreatif_otopart/data/database/database_helper.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
 import 'package:kreatif_otopart/logic/cubits/report/report_state.dart';
@@ -7,11 +6,6 @@ import 'package:kreatif_otopart/data/models/purchase_order.dart';
 import 'package:kreatif_otopart/data/models/purchase_order_item.dart';
 import 'package:kreatif_otopart/data/models/supplier.dart';
 import 'package:kreatif_otopart/data/models/product.dart';
-=======
-import 'package:flutter_otopart_offline/data/database/database_helper.dart';
-import 'package:flutter_otopart_offline/data/models/order.dart';
-import 'package:flutter_otopart_offline/logic/cubits/report/report_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class ReportRepository {
   final DatabaseHelper _databaseHelper;

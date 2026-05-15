@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:kreatif_otopart/core/services/notification_service.dart';
 import 'package:kreatif_otopart/core/utils/invoice_generator.dart';
 import 'package:kreatif_otopart/data/models/order.dart';
@@ -11,16 +10,6 @@ import 'package:kreatif_otopart/data/repositories/payment_repository.dart';
 import 'package:kreatif_otopart/data/repositories/product_repository.dart';
 import 'package:kreatif_otopart/logic/cubits/order/order_state.dart';
 import 'package:kreatif_otopart/core/constants/app_constants.dart';
-=======
-import 'package:flutter_otopart_offline/core/utils/invoice_generator.dart';
-import 'package:flutter_otopart_offline/data/models/order.dart';
-import 'package:flutter_otopart_offline/data/models/order_item.dart';
-import 'package:flutter_otopart_offline/data/models/payment.dart';
-import 'package:flutter_otopart_offline/data/repositories/customer_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/order_repository.dart';
-import 'package:flutter_otopart_offline/data/repositories/payment_repository.dart';
-import 'package:flutter_otopart_offline/logic/cubits/order/order_state.dart';
->>>>>>> 61bd5f38dd367d6fd8d20e8cbc086ce0d3d7e92e
 
 class OrderCubit extends Cubit<OrderState> {
   final OrderRepository _orderRepository;
@@ -101,6 +90,7 @@ class OrderCubit extends Cubit<OrderState> {
     OrderStatus status = OrderStatus.pending,
     int? kmS,
     String? noPol,
+    int totalDiscount = 0,
   }) async {
     if (AppConstants.isDemoMode) {
       final allOrders = await _orderRepository.getAllOrders();
@@ -151,14 +141,16 @@ class OrderCubit extends Cubit<OrderState> {
         totalWeight += item.quantity;
         totalPrice += item.subtotal;
       }
+      
+      final grandTotal = (totalPrice - totalDiscount).toInt();
 
       // Generate invoice
       final invoiceNo = await InvoiceGenerator.generate();
 
       // Hitung kembalian (jika bayar lebih dari total)
-      final change = initialPayment > totalPrice ? initialPayment - totalPrice : 0;
-      // Yang dicatat sebagai "paid" di order adalah maksimal = totalPrice
-      final paidAmount = initialPayment > totalPrice ? totalPrice : initialPayment;
+      final change = initialPayment > grandTotal ? initialPayment - grandTotal : 0;
+      // Yang dicatat sebagai "paid" di order adalah maksimal = grandTotal
+      final paidAmount = initialPayment > grandTotal ? grandTotal : initialPayment;
 
       // Create order
       final order = Order(
@@ -171,7 +163,8 @@ class OrderCubit extends Cubit<OrderState> {
         status: status,
         totalItems: totalItems,
         totalWeight: totalWeight,
-        totalPrice: totalPrice,
+        totalPrice: grandTotal,
+        totalDiscount: totalDiscount,
         paid: paidAmount,
         notes: notes?.trim(),
         createdBy: createdBy,
@@ -199,10 +192,14 @@ class OrderCubit extends Cubit<OrderState> {
         initialPayment: payment,
       );
 
-      // Deduct stock for each item
+      // Deduct stock for each item using unitId if available
       for (final item in items) {
         if (item.productId != null) {
-          await _productRepository.updateStock(item.productId!, -(item.quantity));
+          await _productRepository.updateStock(
+            item.productId!, 
+            -item.quantity, 
+            unitId: item.unitId,
+          );
         }
       }
 
